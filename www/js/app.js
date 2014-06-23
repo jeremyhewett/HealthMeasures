@@ -2,7 +2,9 @@ angular.module('HealthMeasures', [
     'ionic',
     'HealthMeasures.controllers',
     'HealthMeasures.services',
-    'HealthMeasures.diary'
+    'HealthMeasures.libServices',
+    'HealthMeasures.diary',
+    'HealthMeasures.visualizer'
 ])
 
     .run(function ($ionicPlatform) {
@@ -65,22 +67,22 @@ angular.module('HealthMeasures', [
                 }
             })
 
-            .state('tab.account', {
-                url: '/account',
-                views: {
-                    'tab-account': {
-                        templateUrl: 'templates/tab-account.html',
-                        controller: 'AccountCtrl'
-                    }
-                }
-            })
-
             .state('tab.diary', {
                 url: '/diary',
                 views: {
                     'tab-diary': {
                         templateUrl: 'templates/diary/diary.html',
                         controller: 'DiaryController'
+                    }
+                }
+            })
+
+            .state('tab.visualizer', {
+                url: '/visualizer',
+                views: {
+                    'tab-visualizer': {
+                        templateUrl: 'templates/visualizer/visualizer.html',
+                        controller: 'VisualizerController'
                     }
                 }
             });
