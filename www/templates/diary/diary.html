@@ -1,0 +1,24 @@
+<ion-view title="Diary">
+  <ion-content class="has-header">
+
+    <form ng-submit="saveEntry()">
+      <div class="list">
+        <label class="item item-input">
+          <input type="text" placeholder="Describe your symptoms" ng-model="entry.narrative">
+        </label>
+      </div>
+      <div class="padding">
+        <button type="submit" class="button button-block button-positive">Save</button>
+      </div>
+    </form>
+
+    <ion-list>
+      <ion-item ng-repeat="entry in allEntries track by $index" type="item-text-wrap">
+        {{entry.timeStamp | date:'MMM dd yyyy hh:mm'}}
+        <br>
+        {{entry.narrative}}
+      </ion-item>
+    </ion-list>
+
+  </ion-content>
+</ion-view>
