@@ -2,6 +2,8 @@ angular.module('HealthMeasures.diary')
 
 .factory('Diary', function() {
 
+		window.localStorage['diaryEntries'] = angular.toJson(diaryMockData.entries);
+
         var diaryService = {
 
             getAllEntries: function() {
