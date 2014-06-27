@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.visualizer')
 
-	.directive('visualizerScatterPlot', ['D3', function(d3) {
+	.directive('visualizerScatterPlot', ['$filter', 'D3', function($filter, d3) {
 
 		return {
 			restrict: 'E',
@@ -32,16 +32,16 @@ angular.module('HealthMeasures.visualizer')
 				$elem.css('height', (height + margin.top + margin.bottom) + 'px');
 
 				// setup x
-				var xValue = function(d) { return d.x; }, // data -> value
-					xScale = d3.scale.linear().range([0, width]), // value -> display
-					xMap = function(d) { return xScale(xValue(d)); }, // data -> display
-					xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+				var xValue = function(d) {
+						return d.x; }, // data -> value
+					xTickFormat = function(timestamp) { return $filter('date')(timestamp);},
+					xScale, xMap, xAxis;
+
 
 				// setup y
 				var yValue = function(d) { return d.y; }, // data -> value
-					yScale = d3.scale.linear().range([height, 0]), // value -> display
-					yMap = function(d) { return yScale(yValue(d)); }, // data -> display
-					yAxis = d3.svg.axis().scale(yScale).orient("left");
+					yScale, yMap, yAxis;
+
 
 				// setup fill color
 				var cValue = function(d) { return 0; },
@@ -59,9 +59,12 @@ angular.module('HealthMeasures.visualizer')
 					if(!data) return;
 
 					xScale = d3.scale.linear().domain([d3.min(data, xValue), d3.max(data, xValue)]).range([0, width]);
-					yScale = d3.scale.linear().domain([d3.min(data, yValue), d3.max(data, yValue)]).range([0, height]);
+					xMap = function(d) { return xScale(xValue(d)); }; // data -> display
+					xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat(xTickFormat);
 
-					xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+					yScale = d3.scale.linear().domain([d3.min(data, yValue), d3.max(data, yValue)]).range([height, 0]);
+					yMap = function(d) { return yScale(yValue(d)); }; // data -> display
+					yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 					// x-axis
 					svg.append("g")

@@ -1,19 +1,19 @@
 var diaryMockData = {
     entries: [
         {
-            timeStamp: new Date().getTime(),
+            timeStamp: moment('22 Jun, 2014').valueOf(),
             narrative: 'This is my latest entry.'
         },
         {
-            timeStamp: Date.parse('June 20, 2014'),
+            timeStamp: moment('20 Jun, 2014').valueOf(),
             narrative: 'This is my 2nd entry.'
         },
         {
-            timeStamp: Date.parse('June 19, 2014'),
+            timeStamp: moment('Jun 19, 2014').valueOf(),
             narrative: 'This is my first entry.'
         },
         {
-            timeStamp: Date.parse('June 19, 2014'),
+            timeStamp: moment('19 Jun, 2014').valueOf(),
             narrative: 'Another entry.'
         }
     ]
