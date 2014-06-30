@@ -1,12 +1,18 @@
+
 angular.module('HealthMeasures', [
 	'ionic',
-	'HealthMeasures.filters',
+	'HealthMeasures.common',
+	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.controllers',
 	'HealthMeasures.services',
-	'HealthMeasures.libServices',
 	'HealthMeasures.diary',
+	'HealthMeasures.measurement',
 	'HealthMeasures.visualizer'
 ])
+
+	.constant('Config', {
+		injectMockData: true
+	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
 
