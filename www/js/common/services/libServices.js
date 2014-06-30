@@ -1,4 +1,4 @@
-angular.module('HealthMeasures.libServices', [])
+angular.module('HealthMeasures.common')
 
     .factory('D3', [function() {
 

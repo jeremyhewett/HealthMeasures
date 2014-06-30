@@ -1,12 +1,20 @@
+
 angular.module('HealthMeasures', [
 	'ionic',
-	'HealthMeasures.filters',
+	'HealthMeasures.common',
+	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.controllers',
 	'HealthMeasures.services',
-	'HealthMeasures.libServices',
+	'HealthMeasures.settings',
+	'HealthMeasures.packages',
 	'HealthMeasures.diary',
+	'HealthMeasures.measurements',
 	'HealthMeasures.visualizer'
 ])
+
+	.constant('Config', {
+		injectMockData: true
+	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
 
@@ -35,21 +43,21 @@ angular.module('HealthMeasures', [
 				}
 			})
 
-			.state('tab.friends', {
-				url: '/friends',
+			.state('tab.measurements', {
+				url: '/measurements',
 				views: {
-					'tab-friends': {
-						templateUrl: 'templates/tab-friends.html',
-						controller: 'FriendsCtrl'
+					'tab-measurements': {
+						templateUrl: 'templates/measurements/measurements.html',
+						controller: 'MeasurementsController'
 					}
 				}
 			})
-			.state('tab.friend-detail', {
-				url: '/friend/:friendId',
+			.state('tab.measurement-values', {
+				url: '/measurements/:measurementType',
 				views: {
-					'tab-friends': {
-						templateUrl: 'templates/friend-detail.html',
-						controller: 'FriendDetailCtrl'
+					'tab-measurements': {
+						templateUrl: 'templates/measurements/measurementValues.html',
+						controller: 'MeasurementValuesController'
 					}
 				}
 			})

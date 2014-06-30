@@ -1,36 +1,22 @@
 angular.module('HealthMeasures.diary')
 
-.factory('Diary', function() {
+.factory('Diary', ['Storage', function(Storage) {
 
-		window.localStorage['diaryEntries'] = angular.toJson(diaryMockData.entries);
+		var key = 'diary.entries';
 
-        var diaryService = {
+		var diaryService = {
 
             getAllEntries: function() {
-                var dataString = window.localStorage['diaryEntries'];
-                if(dataString) {
-                    return angular.fromJson(dataString);
-                }
-                return [];
+				return Storage.get(key);
             },
 
             saveEntry: function(entry) {
-                var entries = diaryService.getAllEntries();
-                entries.push(entry);
-                entries.sort(function(a, b) {
-                    return b.timeStamp - a.timeStamp;
-                });
-                diaryService.saveAllEntries(entries);
-            },
-
-            saveAllEntries: function(entries) {
-                entries.sort(function(a, b) {
-                    return b.timeStamp - a.timeStamp;
-                });
-                window.localStorage['diaryEntries'] = angular.toJson(entries);
+                Storage.append(key, entry, {sort: function(a, b) {
+					return b.timeStamp - a.timeStamp;
+				}});
             }
         };
 
         return diaryService;
 
-    });
+    }]);

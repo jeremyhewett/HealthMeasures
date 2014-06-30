@@ -1,4 +1,4 @@
-angular.module('HealthMeasures.filters', [])
+angular.module('HealthMeasures.common')
 
 	.filter('date', ['Formats', function(Formats) {
 		return function(timestamp) {

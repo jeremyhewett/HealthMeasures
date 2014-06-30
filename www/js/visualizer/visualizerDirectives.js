@@ -9,9 +9,10 @@ angular.module('HealthMeasures.visualizer')
 				data: '='
 			},
 			template: '<svg version="1.1"></svg>',
-			link: function($scope, $elem, attrs) {
+			link: function($scope, elem, attrs) {
+				var $elem = $(elem);
 
-				$elem.append('<style>\
+				var style = '<style>\
 						.axis path,\
 						.axis line {\
 							fill: none;\
@@ -21,15 +22,9 @@ angular.module('HealthMeasures.visualizer')
 						.dot {\
 							stroke: #000;\
 						}\
-					</style>');
+					</style>';
 
 				var margin = {top: 10, right: 10, bottom: 20, left: 30};
-
-				var width = parseInt($elem.parent().css('width')) - (margin.left + margin.right);
-				var height = parseInt($elem.parent().css('height')) - (margin.top + margin.bottom);
-
-				$elem.css('width', (width + margin.left + margin.right) + 'px');
-				$elem.css('height', (height + margin.top + margin.bottom) + 'px');
 
 				// setup x
 				var xValue = function(d) {
@@ -37,11 +32,9 @@ angular.module('HealthMeasures.visualizer')
 					xTickFormat = function(timestamp) { return $filter('date')(timestamp);},
 					xScale, xMap, xAxis;
 
-
 				// setup y
 				var yValue = function(d) { return d.y; }, // data -> value
 					yScale, yMap, yAxis;
-
 
 				// setup fill color
 				var cValue = function(d) { return 0; },
@@ -52,28 +45,46 @@ angular.module('HealthMeasures.visualizer')
 					.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				$scope.$watch('data', function(data) {
-
+				function redraw() {
 					svg.selectAll("*").remove(); //Clear the canvas
 
-					if(!data) return;
+					if(!$scope.data) return;
 
-					xScale = d3.scale.linear().domain([d3.min(data, xValue), d3.max(data, xValue)]).range([0, width]);
+					var svgWidth = $elem.parent().width();
+					var svgHeight = $elem.parent().height();
+
+					$elem.css('width', svgWidth + 'px');
+					$elem.css('height', svgHeight + 'px');
+
+					var plotWidth = svgWidth - (margin.left + margin.right);
+					var plotHeight = svgHeight - (margin.top + margin.bottom);
+
+					var xMin = d3.min($scope.data, xValue);
+					var xMax = d3.max($scope.data, xValue);
+					xMin -= (xMax - xMin)*0.1;
+					xMax += (xMax - xMin)*0.1;
+					xScale = d3.scale.linear().domain([xMin, xMax]).range([0, plotWidth]);
 					xMap = function(d) { return xScale(xValue(d)); }; // data -> display
 					xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat(xTickFormat);
 
-					yScale = d3.scale.linear().domain([d3.min(data, yValue), d3.max(data, yValue)]).range([height, 0]);
+					var yMin = d3.min($scope.data, yValue);
+					var yMax = d3.max($scope.data, yValue);
+					yMin -= (yMax - yMin)*0.1;
+					yMax += (yMax - yMin)*0.1;
+					yScale = d3.scale.linear().domain([yMin, yMax]).range([plotHeight, 0]);
 					yMap = function(d) { return yScale(yValue(d)); }; // data -> display
 					yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+					$elem.append(style);
 
 					// x-axis
 					svg.append("g")
 						.attr("class", "x axis")
-						.attr("transform", "translate(0," + height + ")")
+						.attr("transform", "translate(0," + plotHeight + ")")
 						.call(xAxis)
 						.append("text")
 						.attr("class", "label")
-						.attr("x", width)
+						.attr("x", plotWidth)
 						.attr("y", -6)
 						.style("text-anchor", "end")
 						.text("Date");
@@ -92,7 +103,7 @@ angular.module('HealthMeasures.visualizer')
 
 					// draw dots
 					svg.selectAll(".dot")
-						.data(data)
+						.data($scope.data)
 						.enter().append("circle")
 						.attr("class", "dot")
 						.attr("r", 3.5)
@@ -100,6 +111,14 @@ angular.module('HealthMeasures.visualizer')
 						.attr("cy", yMap)
 						.style("fill", function(d) { return color(cValue(d));});
 
+				}
+
+				$scope.$watch('data', function() {
+					redraw();
+				});
+
+				$(window).bind("resize", function() {
+					redraw();
 				});
 			}
 		};

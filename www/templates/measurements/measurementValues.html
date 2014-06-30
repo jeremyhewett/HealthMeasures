@@ -1,0 +1,22 @@
+<ion-view title="{{measurementType}}">
+  <ion-content class="has-header">
+
+    <form ng-submit="saveMeasurement()">
+      <div class="list">
+        <label class="item item-input">
+          <input type="text" placeholder="Enter value" ng-model="entry.value">
+        </label>
+      </div>
+      <div class="padding">
+        <button type="submit" class="button button-block button-positive">Save</button>
+      </div>
+    </form>
+
+    <ion-list>
+      <ion-item ng-repeat="value in values track by $index" type="item-text-wrap">
+        {{value}}
+      </ion-item>
+    </ion-list>
+
+  </ion-content>
+</ion-view>
