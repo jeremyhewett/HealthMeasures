@@ -5,8 +5,10 @@ angular.module('HealthMeasures', [
 	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.controllers',
 	'HealthMeasures.services',
+	'HealthMeasures.settings',
+	'HealthMeasures.packages',
 	'HealthMeasures.diary',
-	'HealthMeasures.measurement',
+	'HealthMeasures.measurements',
 	'HealthMeasures.visualizer'
 ])
 
@@ -41,21 +43,21 @@ angular.module('HealthMeasures', [
 				}
 			})
 
-			.state('tab.friends', {
-				url: '/friends',
+			.state('tab.measurements', {
+				url: '/measurements',
 				views: {
-					'tab-friends': {
-						templateUrl: 'templates/tab-friends.html',
-						controller: 'FriendsCtrl'
+					'tab-measurements': {
+						templateUrl: 'templates/measurements/measurements.html',
+						controller: 'MeasurementsController'
 					}
 				}
 			})
-			.state('tab.friend-detail', {
-				url: '/friend/:friendId',
+			.state('tab.measurement-values', {
+				url: '/measurements/:measurementType',
 				views: {
-					'tab-friends': {
-						templateUrl: 'templates/friend-detail.html',
-						controller: 'FriendDetailCtrl'
+					'tab-measurements': {
+						templateUrl: 'templates/measurements/measurementValues.html',
+						controller: 'MeasurementValuesController'
 					}
 				}
 			})

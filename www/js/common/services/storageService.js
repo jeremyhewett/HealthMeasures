@@ -32,7 +32,7 @@ angular.module('HealthMeasures.common')
 			append: function(key, value, options) {
 				var data = storageService.get(key);
 				data.push(value);
-				if(options.sort) {
+				if(options && options.sort) {
 					data.sort(options.sort);
 				}
 				storageService.set(key, data);

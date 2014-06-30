@@ -1,0 +1,9 @@
+<ion-view title="Measurements">
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="measurement in measurements track by $index" type="item-text-wrap" href="#/tab/measurements/{{measurement.id}}">
+        {{measurement.displayName}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

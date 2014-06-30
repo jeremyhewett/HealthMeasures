@@ -1,10 +1,11 @@
-angular.module('HealthMeasures.measurement')
+angular.module('HealthMeasures.measurements')
 
-	.factory('Measurement', ['DataType', function(DataType) {
+	.factory('Measurements', ['DataType', 'Storage', function(DataType, Storage) {
 
 		var measurementTypes = {
 
 			weight: {
+				id: 'weight',
 				displayName: 'Weight',
 				shortName: 'Weight',
 				type: DataType.number,
@@ -13,6 +14,7 @@ angular.module('HealthMeasures.measurement')
 			},
 
 			O2: {
+				id: 'O2',
 				displayName: 'O2 Saturation',
 				shortName: 'O2 Sat',
 				type: DataType.number,
@@ -21,6 +23,7 @@ angular.module('HealthMeasures.measurement')
 			},
 
 			feeds: {
+				id: 'feeds',
 				displayName: 'Feeds',
 				shortName: 'Feeds',
 				type: DataType.number,
@@ -30,28 +33,20 @@ angular.module('HealthMeasures.measurement')
 
 		};
 
-		var measurementService = {
+		var measurementsService = {
 
 			types: measurementTypes,
 
 			getValuesFor: function(type) {
-				var dataString = window.localStorage['measurement.O2.values' + type];
-				if(dataString) {
-					return angular.fromJson(dataString);
-				}
-				return [];
+				return Storage.get('measurements.' + type);
 			},
 
-			saveValueFor: function(type) {
-				var dataString = window.localStorage['measurement.O2.values' + type];
-				if(dataString) {
-					return angular.fromJson(dataString);
-				}
-				return [];
+			saveValueFor: function(type, value) {
+				Storage.append('measurements.' + type, value);
 			}
 
 		};
 
-		return measurementService;
+		return measurementsService;
 
 	}]);

@@ -1,10 +1,10 @@
 <ion-view title="{{measurementType}}">
   <ion-content class="has-header">
 
-    <form ng-submit="saveEntry()">
+    <form ng-submit="saveMeasurement()">
       <div class="list">
         <label class="item item-input">
-          <input type="text" placeholder="Describe your symptoms" ng-model="entry.narrative">
+          <input type="text" placeholder="Enter value" ng-model="entry.value">
         </label>
       </div>
       <div class="padding">
@@ -13,10 +13,8 @@
     </form>
 
     <ion-list>
-      <ion-item ng-repeat="entry in allEntries track by $index" type="item-text-wrap">
-        {{entry.timeStamp | dateTime}}
-        <br>
-        {{entry.narrative}}
+      <ion-item ng-repeat="value in values track by $index" type="item-text-wrap">
+        {{value}}
       </ion-item>
     </ion-list>
 
