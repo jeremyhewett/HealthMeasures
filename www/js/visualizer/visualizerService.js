@@ -7,8 +7,8 @@ angular.module('HealthMeasures.visualizer')
             getDiaryData: function() {
                 var diaryEntries = Diary.getAllEntries();
 				var data = {
-					xAxisLabel: 'Date',
-					yAxisLabel: 'Entry length'
+					xAxis: 'Date',
+					yAxis: 'Entry length'
 				};
                 data.values = diaryEntries.map(function(entry) {
                     return {
@@ -21,10 +21,11 @@ angular.module('HealthMeasures.visualizer')
 
 			getMeasurementDataFor: function(measurementTypeId) {
 				var measurementType = Measurements.measurementTypes[measurementTypeId];
-				var entries = Measurements.getValuesFor(measurementType.id);
+				var entries = Measurements.getEntriesFor(measurementType.id);
 				var data = {
-					xAxisLabel: 'Date',
-					yAxisLabel: measurementType.units
+					xAxis: 'Date',
+					yAxis: measurementType.displayName,
+					units: measurementType.units
 				};
 				data.values = entries.map(function(entry) {
 					return {

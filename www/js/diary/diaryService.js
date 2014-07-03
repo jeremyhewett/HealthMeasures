@@ -11,7 +11,7 @@ angular.module('HealthMeasures.diary')
             },
 
             saveEntry: function(entry) {
-                Storage.append(key, entry, {sort: function(a, b) {
+                Storage.append(key, entry, { sort: function(a, b) {
 					return b.timeStamp - a.timeStamp;
 				}});
             }

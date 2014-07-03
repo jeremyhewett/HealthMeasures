@@ -99,7 +99,7 @@ angular.module('HealthMeasures.visualizer')
 						.attr("y", 6)
 						.attr("dy", ".71em")
 						.style("text-anchor", "end")
-						.text($scope.data.yAxisLabel);
+						.text($scope.data.yAxis + ($scope.data.units ? " (" + $scope.data.units + ")" : ""));
 
 					// draw dots
 					svg.selectAll(".dot")
