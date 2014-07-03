@@ -14,9 +14,9 @@
 
     <ion-list>
       <ion-item ng-repeat="entry in allEntries track by $index" type="item-text-wrap">
-        {{entry.timeStamp | dateTime}}
+        <span>{{entry.timeStamp | dateTime}}</span>
         <br>
-        {{entry.narrative}}
+        <span>{{entry.narrative}}</span>
       </ion-item>
     </ion-list>
 

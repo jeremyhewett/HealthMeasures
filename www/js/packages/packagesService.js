@@ -6,9 +6,9 @@ angular.module('HealthMeasures.packages')
 
 			infantHeart: {
 				measurements: [
-					Measurements.types.weight,
-					Measurements.types.O2,
-					Measurements.types.feeds
+					Measurements.measurementTypes.weight,
+					Measurements.measurementTypes.O2,
+					Measurements.measurementTypes.feeds
 				]
 			}
 

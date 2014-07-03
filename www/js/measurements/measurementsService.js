@@ -35,14 +35,16 @@ angular.module('HealthMeasures.measurements')
 
 		var measurementsService = {
 
-			types: measurementTypes,
+			measurementTypes: measurementTypes,
 
-			getValuesFor: function(type) {
+			getEntriesFor: function(type) {
 				return Storage.get('measurements.' + type);
 			},
 
-			saveValueFor: function(type, value) {
-				Storage.append('measurements.' + type, value);
+			saveEntryFor: function(type, value) {
+				Storage.append('measurements.' + type, value, { sort: function(a, b) {
+					return b.timeStamp - a.timeStamp;
+				}});
 			}
 
 		};

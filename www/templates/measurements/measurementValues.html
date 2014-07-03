@@ -1,4 +1,4 @@
-<ion-view title="{{measurementType}}">
+<ion-view title="{{measurementType.id}}">
   <ion-content class="has-header">
 
     <form ng-submit="saveMeasurement()">
@@ -13,8 +13,10 @@
     </form>
 
     <ion-list>
-      <ion-item ng-repeat="value in values track by $index" type="item-text-wrap">
-        {{value}}
+      <ion-item ng-repeat="entry in entries track by $index" type="item-text-wrap">
+        <span>{{entry.timeStamp | dateTime}}</span>
+        <br>
+        <span>{{entry.value}}</span><span> {{measurementType.units}}</span>
       </ion-item>
     </ion-list>
 
