@@ -35,7 +35,7 @@ angular.module('HealthMeasures.measurements')
 
 		var measurementsService = {
 
-			types: measurementTypes,
+			measurementTypes: measurementTypes,
 
 			getValuesFor: function(type) {
 				return Storage.get('measurements.' + type);

@@ -1,8 +1,18 @@
 <ion-view title="Visualizer">
+
+  <ion-nav-buttons side="right">
+    <label class="item-input item-select select-no-label">
+      <select ng-model="series" ng-change="onSeriesSelectionChanged()">
+        <option ng-repeat="option in seriesSelectOptions" value="{{option.value}}">{{option.name}}</option>
+      </select>
+    </label>
+    </span>
+  </ion-nav-buttons>
+
   <ion-content class="has-header">
 
     <div style="width: 100%; height: 100%;">
-      <visualizer-scatter-plot data="diaryData"></visualizer-scatter-plot>
+      <visualizer-scatter-plot data="data"></visualizer-scatter-plot>
     </div>
 
   </ion-content>

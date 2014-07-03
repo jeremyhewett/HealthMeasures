@@ -1,7 +1,16 @@
 angular.module('HealthMeasures.visualizer')
 
-    .controller('VisualizerController', ['$scope', 'Visualizer', function($scope, Visualizer) {
+    .controller('VisualizerController', ['$scope', 'Measurements', 'Visualizer', function($scope, Measurements, Visualizer) {
 
-        $scope.diaryData = Visualizer.getDiaryData();
+		$scope.seriesSelectOptions = [];
+		angular.forEach(Measurements.measurementTypes, function(type) {
+			$scope.seriesSelectOptions.push({ name: type.displayName, value: type.id });
+		});
+
+        $scope.data = Visualizer.getDiaryData();
+
+		$scope.onSeriesSelectionChanged = function() {
+			$scope.data = Visualizer.getMeasurementDataFor($scope.series);
+		}
 
     }]);
