@@ -1,22 +1,28 @@
-<ion-view title="{{measurementType.id}}">
+<ion-view title="{{parameter.id}}">
   <ion-content class="has-header">
 
     <form ng-submit="saveMeasurement()">
       <div class="list">
-        <label class="item item-input">
-          <input type="text" placeholder="Enter value" ng-model="entry.value">
-        </label>
+        <div class="item item-input">
+          <div inline ng-switch="parameter.type">
+            <input ng-switch-when="number" type="number" placeholder="Enter {{parameter.displayName}}" ng-model="entry.value">
+            <input ng-switch-default type="text" placeholder="Enter {{parameter.displayName}}" ng-model="entry.value">
+          </div>
+          <span>({{parameter.units}})</span>
+        </div>
       </div>
       <div class="padding">
         <button type="submit" class="button button-block button-positive">Save</button>
       </div>
     </form>
 
-    <ion-list>
+    <ion-list class="measurement-list">
       <ion-item ng-repeat="entry in entries track by $index" type="item-text-wrap">
-        <span>{{entry.timeStamp | dateTime}}</span>
-        <br>
-        <span>{{entry.value}}</span><span> {{measurementType.units}}</span>
+        <span class="timestamp">{{entry.timeStamp | dateTime}}</span>
+        <span class="value">{{entry.value}}<span> {{parameter.units}}</span></span>
+        <ion-option-button class="button-assertive" ng-click="delete(entry)">
+          Delete
+        </ion-option-button>
       </ion-item>
     </ion-list>
 

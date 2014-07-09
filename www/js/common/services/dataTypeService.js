@@ -6,7 +6,7 @@ angular.module('HealthMeasures.common')
 			text: 'text',
 			number: 'number',
 			boolean: 'boolean',
-			dateTime:'dateTime'
+			dateTime: 'dateTime'
 		};
 
 		return dataTypes;

@@ -40,7 +40,10 @@ angular.module('HealthMeasures.test')
 	.run(['Config', 'Storage', 'MeasurementsMockData', function(Config, Storage, MeasurementsMockData) {
 
 		if(Config.injectMockData) {
-			Storage.set('measurements.O2', MeasurementsMockData.O2);
+			Storage.deleteAll('measurements.O2');
+			MeasurementsMockData.O2.forEach(function(entry) {
+				Storage.insert('measurements.O2', entry);
+			});
 		}
 
 	}]);

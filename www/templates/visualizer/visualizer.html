@@ -2,7 +2,7 @@
 
   <ion-nav-buttons side="right">
     <label class="item-input item-select select-no-label">
-      <select ng-model="series" ng-change="onSeriesSelectionChanged()">
+      <select ng-model="parameter" ng-change="onParameterSelectionChanged()">
         <option ng-repeat="option in seriesSelectOptions" value="{{option.value}}">{{option.name}}</option>
       </select>
     </label>

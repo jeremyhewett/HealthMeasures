@@ -2,7 +2,7 @@ angular.module('HealthMeasures.measurements')
 
 	.factory('Measurements', ['DataType', 'Storage', function(DataType, Storage) {
 
-		var measurementTypes = {
+		var parameters = {
 
 			weight: {
 				id: 'weight',
@@ -33,21 +33,40 @@ angular.module('HealthMeasures.measurements')
 
 		};
 
-		var measurementsService = {
+		var measurementsService = function(parameterId) {
 
-			measurementTypes: measurementTypes,
+			return {
 
-			getEntriesFor: function(type) {
-				return Storage.get('measurements.' + type);
-			},
+				getEntries: function() {
+					var entries = Storage.selectAll('measurements.' + parameterId);
+					return entries.sort(function(a, b) {
+						return b.timeStamp - a.timeStamp;
+					});
+				},
 
-			saveEntryFor: function(type, value) {
-				Storage.append('measurements.' + type, value, { sort: function(a, b) {
-					return b.timeStamp - a.timeStamp;
-				}});
-			}
+				saveValue: function(value) {
+					var entry = {
+						timeStamp: moment().valueOf(),
+						value: value
+					};
+					var entries = Storage.insert('measurements.' + parameterId, entry);
+					return entries.sort(function(a, b) {
+						return b.timeStamp - a.timeStamp;
+					});
+				},
+
+				deleteEntry: function(entry) {
+					var entries = Storage.delete('measurements.' + parameterId, entry.id);
+					return entries.sort(function(a, b) {
+						return b.timeStamp - a.timeStamp;
+					});
+				}
+
+			};
 
 		};
+
+		measurementsService.parameters = parameters;
 
 		return measurementsService;
 

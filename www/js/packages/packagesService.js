@@ -5,10 +5,10 @@ angular.module('HealthMeasures.packages')
 		var packages = {
 
 			infantHeart: {
-				measurements: [
-					Measurements.measurementTypes.weight,
-					Measurements.measurementTypes.O2,
-					Measurements.measurementTypes.feeds
+				parameters: [
+					Measurements.parameters.weight,
+					Measurements.parameters.O2,
+					Measurements.parameters.feeds
 				]
 			}
 

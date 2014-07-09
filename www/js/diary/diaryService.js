@@ -7,13 +7,16 @@ angular.module('HealthMeasures.diary')
 		var diaryService = {
 
             getAllEntries: function() {
-				return Storage.get(key);
+				return Storage.selectAll(key).sort(function(a, b) {
+					return b.timeStamp - a.timeStamp;
+				});
             },
 
             saveEntry: function(entry) {
-                Storage.append(key, entry, { sort: function(a, b) {
+                var entries = Storage.insert(key, entry);
+				return entries.sort(function(a, b) {
 					return b.timeStamp - a.timeStamp;
-				}});
+				});
             }
         };
 

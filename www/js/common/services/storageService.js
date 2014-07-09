@@ -11,31 +11,66 @@ angular.module('HealthMeasures.common')
 					}
 					return [];
 				},
-				write: function(key, value) {
-					window.localStorage[key] = angular.toJson(value);
+				write: function(key, records) {
+					window.localStorage[key] = angular.toJson(records);
 				}
 			}
 		};
 
-		var currentDevice = devices.localStorage;
+		var activeDevice = devices.localStorage;
 
 		var storageService = {
 
-			get: function(key) {
-				return currentDevice.read(key);
+			selectAll: function(key) {
+				var records = activeDevice.read(key);
+				return records;
 			},
 
-			set: function(key, values) {
-				currentDevice.write(key, values);
+			insert: function(key, record) {
+				var records = storageService.selectAll(key);
+				record.id = records.length ? records[records.length - 1].id + 1 : 0;
+				records.push(record);
+				activeDevice.write(key, records);
+				return records;
 			},
 
-			append: function(key, value, options) {
-				var data = storageService.get(key);
-				data.push(value);
-				if(options && options.sort) {
-					data.sort(options.sort);
+			update: function(key, record) {
+				if(angular.isUndefined(record.id)) {
+					throw 'Failed to update record. Record id is undefined.';
 				}
-				storageService.set(key, data);
+				var records = storageService.selectAll(key);
+				var index;
+				for(index = 0; index < records.length; index++) {
+					if(records[index].id == record.id) {
+						break;
+					}
+				}
+				if(index >= records.length) {
+					throw 'Failed to update record. Id ' + record.id + ' not found in ' + key;
+				}
+				records[index] = record;
+				activeDevice.write(key, records);
+				return records;
+			},
+
+			'delete': function(key, id) {
+				var records = storageService.selectAll(key);
+				var index;
+				for(index = 0; index < records.length; index++) {
+					if(records[index].id == id) {
+						break;
+					}
+				}
+				if(index >= records.length) {
+					throw 'Failed to delete record. Id ' + id + ' not found in ' + key;
+				}
+				records.splice(index, 1);
+				activeDevice.write(key, records);
+				return records;
+			},
+
+			deleteAll: function(key) {
+				activeDevice.write(key, []);
 			}
 
 		};

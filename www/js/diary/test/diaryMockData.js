@@ -32,7 +32,10 @@ angular.module('HealthMeasures.test')
 	.run(['Config', 'Storage', 'DiaryMockData', function(Config, Storage, DiaryMockData) {
 
 		if(Config.injectMockData) {
-			Storage.set('diary.entries', DiaryMockData.entries);
+			Storage.deleteAll('diary.entries');
+			DiaryMockData.entries.forEach(function(entry) {
+				Storage.insert('diary.entries', entry);
+			});
 		}
 
 	}]);
