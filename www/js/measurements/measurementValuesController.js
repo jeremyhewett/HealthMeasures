@@ -1,20 +1,20 @@
 angular.module('HealthMeasures.measurements')
 
-.controller('MeasurementValuesController', ['$scope', '$stateParams', 'Measurements', function($scope, $stateParams, Measurements) {
+	.controller('MeasurementValuesController', ['$scope', '$stateParams', 'Measurements', function($scope, $stateParams, Measurements) {
 
-	$scope.measurementType = Measurements.measurementTypes[$stateParams.measurementType];
+		$scope.parameter = Measurements.parameters[$stateParams.parameter];
 
-	$scope.entries = Measurements.getEntriesFor($scope.measurementType.id);
+		$scope.entries = Measurements($scope.parameter.id).getEntries();
 
-	$scope.entry = {};
+		$scope.entry = {};
 
-	$scope.saveMeasurement = function() {
-		Measurements.saveEntryFor($scope.measurementType.id,
-			{
-				timeStamp: moment().valueOf(),
-				value: $scope.entry.value
-			});
-		$scope.entry.value = '';
-		$scope.entries = Measurements.getEntriesFor($scope.measurementType.id);
-	};
-}]);
+		$scope.saveMeasurement = function() {
+			$scope.entries = Measurements($scope.parameter.id).saveValue($scope.entry.value);
+			$scope.entry.value = '';
+		};
+
+		$scope.delete = function(entry) {
+			$scope.entries = Measurements($scope.parameter.id).deleteEntry(entry);
+		};
+
+	}]);

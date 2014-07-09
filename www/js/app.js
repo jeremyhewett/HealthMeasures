@@ -53,7 +53,7 @@ angular.module('HealthMeasures', [
 				}
 			})
 			.state('tab.measurement-values', {
-				url: '/measurements/:measurementType',
+				url: '/measurements/:parameter',
 				views: {
 					'tab-measurements': {
 						templateUrl: 'templates/measurements/measurementValues.html',

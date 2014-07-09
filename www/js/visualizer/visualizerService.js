@@ -19,13 +19,13 @@ angular.module('HealthMeasures.visualizer')
 				return data;
             },
 
-			getMeasurementDataFor: function(measurementTypeId) {
-				var measurementType = Measurements.measurementTypes[measurementTypeId];
-				var entries = Measurements.getEntriesFor(measurementType.id);
+			getDataForParameter: function(parameterId) {
+				var parameter = Measurements.parameters[parameterId];
+				var entries = Measurements(parameterId).getEntries();
 				var data = {
 					xAxis: 'Date',
-					yAxis: measurementType.displayName,
-					units: measurementType.units
+					yAxis: parameter.displayName,
+					units: parameter.units
 				};
 				data.values = entries.map(function(entry) {
 					return {
