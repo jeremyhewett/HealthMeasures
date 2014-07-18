@@ -1,0 +1,14 @@
+{
+  "name": "HealthMeasuresApi",
+  "version": "0.0.1",
+  "description": "Web Service for HealthMeasures mobile app",
+  "main": "server.js",
+  "author": "Jeremy Hewett",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "1.4.3",
+    "cryptojs": "2.5.3",
+    "express": "4.6.1",
+    "mongojs": "0.13.0"
+  }
+}

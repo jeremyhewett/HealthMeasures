@@ -1,0 +1,31 @@
+<ion-view title="Register">
+  <ion-content class="has-header">
+
+    <form ng-submit="register()">
+      <div class="list">
+        <label class="item item-input">
+          <input type="text" placeholder="email" ng-model="user.email">
+        </label>
+        <label class="item item-input">
+          <input type="password" placeholder="password" ng-model="user.password">
+        </label>
+      </div>
+      <div class="padding">
+        <button type="submit" class="button button-block button-positive">Save</button>
+      </div>
+    </form>
+
+    <ion-list>
+      <ion-item type="item-text-wrap">
+        <span>email: </span><span>{{user.email}}</span>
+      </ion-item>
+      <ion-item ng-show="user.id" type="item-text-wrap">
+        <span>id: </span><span>{{user.id}}</span>
+      </ion-item>
+      <ion-item ng-show="error" type="item-text-wrap">
+        <span>error: </span><span>{{error}}</span>
+      </ion-item>
+    </ion-list>
+
+  </ion-content>
+</ion-view>
