@@ -11,3 +11,13 @@
 .measurement-list .item .value {
   float: right;
 }
+.chart-close-container {
+  float: right;
+  position: relative;
+  margin: 0 10px -23px 0;
+}
+.chart-close-container .chart-close {
+  color: #999999;
+  font-size: 20px;
+  cursor: pointer;
+}

@@ -2,8 +2,8 @@
 
   <ion-nav-buttons side="right">
     <label class="item-input item-select select-no-label">
-      <select ng-model="parameter" ng-change="onParameterSelectionChanged()">
-        <option ng-repeat="option in seriesSelectOptions" value="{{option.value}}">{{option.name}}</option>
+      <select ng-model="parameter" ng-change="onParameterSelectionChanged(parameter)">
+        <option ng-repeat="option in parameterOptions" value="{{option.value}}">{{option.name}}</option>
       </select>
     </label>
     </span>
@@ -11,8 +11,9 @@
 
   <ion-content class="has-header">
 
-    <div style="width: 100%; height: 100%;">
-      <visualizer-scatter-plot data="data"></visualizer-scatter-plot>
+    <div ng-repeat="series in dataSeries" style="width: 100%; height: {{100 / dataSeries.length}}%;">
+      <div class="chart-close-container"><span class="chart-close" ng-click="remove(series)">×</span></div>
+      <visualizer-scatter-plot data="series"></visualizer-scatter-plot>
     </div>
 
   </ion-content>
