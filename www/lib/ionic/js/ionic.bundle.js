@@ -9067,6 +9067,7 @@ function minErr(module) {
         encodeURIComponent(stringify(arguments[i]));
     }
 
+	console.log(message);
     return new Error(message);
   };
 }

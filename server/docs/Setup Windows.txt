@@ -1,0 +1,5 @@
+sc create MongoDB binpath= "\"C:\Program Files\MongoDB 2.6 Standard\bin\mongod.exe\" --service --config=\"C:\Program Files\MongoDB 2.6 Standard\mongod.cfg\"" DisplayName= "MongoDB 2.6 Standard" start= "auto"
+
+Install Python 2.7.8
+Install Visual C++ 2008 Express
+Add to PATH: C:\Program Files\Microsoft Visual Studio 9.0\VC\vcpackages

@@ -2,6 +2,7 @@
 angular.module('HealthMeasures', [
 	'ionic',
 	'HealthMeasures.common',
+	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.controllers',
 	'HealthMeasures.services',
@@ -13,7 +14,8 @@ angular.module('HealthMeasures', [
 ])
 
 	.constant('Config', {
-		injectMockData: true
+		apiUrl: 'http://localhost:80/api',
+		injectMockData: true,
 	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
@@ -37,8 +39,8 @@ angular.module('HealthMeasures', [
 				url: '/dash',
 				views: {
 					'tab-dash': {
-						templateUrl: 'templates/tab-dash.html',
-						controller: 'DashCtrl'
+						templateUrl: 'templates/user/register.html',
+						controller: 'RegisterController'
 					}
 				}
 			})
