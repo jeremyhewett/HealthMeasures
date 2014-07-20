@@ -23,6 +23,9 @@ angular.module('HealthMeasures.visualizer')
 						.dot {\
 							stroke: #000;\
 						}\
+						.line {\
+							fill: none;\
+						}\
 					</style>';
 
 				var svgPadding = {top: 10, right: 30, bottom: 25, left: 30};
@@ -87,9 +90,14 @@ angular.module('HealthMeasures.visualizer')
 						var valueScale = d3.scale.linear().domain([yMin, yMax]).range([(i * 100 / $scope.series.length) + bottomBuffer, ((i + 1) * 100 / $scope.series.length) - topBuffer]);
 						yMap = function(d) { return yScale(valueScale(yValue(d))); }; // data -> display
 
+						var line = d3.svg.line()
+							.x(function(d) { return xScale(xValue(d)); })
+							.y(function(d) { return yScale(valueScale(yValue(d))); });
+
 						// draw series
 						var gSeries = gPlot.append("g")
 							.attr("class", data.yAxis);
+
 						gSeries.selectAll(".dot")
 							.data(data.values)
 							.enter().append("circle")
@@ -97,7 +105,13 @@ angular.module('HealthMeasures.visualizer')
 							.attr("r", 3.5)
 							.attr("cx", xMap)
 							.attr("cy", yMap)
-							.style("fill", function(d) { return color(i);});
+							.style("fill", color(i));
+
+						gSeries.append("path")
+							.datum(data.values)
+							.attr("class", "line")
+							.style("stroke", color(i))
+							.attr("d", line);
 
 					});
 
