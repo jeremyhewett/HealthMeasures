@@ -21,7 +21,7 @@ angular.module('HealthMeasures.visualizer')
 							shape-rendering: crispEdges;\
 						}\
 						.dot {\
-							stroke: #000;\
+							stroke: none;\
 						}\
 						.line {\
 							fill: none;\
@@ -83,8 +83,12 @@ angular.module('HealthMeasures.visualizer')
 
 					$scope.series.forEach(function(data, i) {
 
-						var yMin = d3.min(data.values, yValue);
-						var yMax = d3.max(data.values, yValue);
+						var values = data.values.filter(function(d) {
+							return xValue(d) >= $scope.config.from && xValue(d) <= $scope.config.to;
+						});
+
+						var yMin = d3.min(values, yValue);
+						var yMax = d3.max(values, yValue);
 						var bottomBuffer = i == 0 ? yBuffer : yBuffer / 2;
 						var topBuffer = i == $scope.series.length - 1 ? yBuffer : yBuffer / 2;
 						var valueScale = d3.scale.linear().domain([yMin, yMax]).range([(i * 100 / $scope.series.length) + bottomBuffer, ((i + 1) * 100 / $scope.series.length) - topBuffer]);
@@ -99,16 +103,16 @@ angular.module('HealthMeasures.visualizer')
 							.attr("class", data.yAxis);
 
 						gSeries.selectAll(".dot")
-							.data(data.values)
+							.data(values)
 							.enter().append("circle")
 							.attr("class", "dot")
-							.attr("r", 3.5)
+							.attr("r", 5)
 							.attr("cx", xMap)
 							.attr("cy", yMap)
 							.style("fill", color(i));
 
 						gSeries.append("path")
-							.datum(data.values)
+							.datum(values)
 							.attr("class", "line")
 							.style("stroke", color(i))
 							.attr("d", line);
