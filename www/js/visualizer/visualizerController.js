@@ -1,46 +1,66 @@
 angular.module('HealthMeasures.visualizer')
 
-    .controller('VisualizerController', ['$scope', 'Measurements', 'Visualizer', function($scope, Measurements, Visualizer) {
+    .controller('VisualizerController', ['$ionicPopup', '$scope', 'ParameterService', 'Visualizer', function($ionicPopup, $scope, ParameterService, Visualizer) {
 
-		$scope.parameterOptions = [];
+		$scope.parameters = {
+			list: [],
+			map: {}
+		};
 
 		$scope.chart = {
 			config: {
 				from: moment('22 Jun 2014', 'DD MMM YYYY').valueOf(),
-				to: moment('27 Jun 2014', 'DD MMM YYYY').valueOf()
+				to: moment('26 Jun 2014', 'DD MMM YYYY').valueOf()
 			},
 			series: []
 		};
 
-		Visualizer.loadSelectedParameters().forEach(function(parameterId) {
-			$scope.chart.series.push(Visualizer.getDataForParameter(parameterId));
-		});
+		function initialize() {
+			angular.forEach(ParameterService.parameterTypes, function(type) {
+				var parameter = {
+					id: type.id,
+					displayName: type.displayName,
+					units: type.units,
+					isActive: false
+				};
+				$scope.parameters.map[type.id] = parameter;
+				$scope.parameters.list.push(parameter);
+			});
 
-		angular.forEach(Measurements.parameters, function(type) {
-			$scope.parameterOptions.push({ name: type.displayName, value: type.id });
-		});
+			Visualizer.loadSelectedParameters().forEach(function(parameterId) {
+				if(parameterId && $scope.parameters.map[parameterId]) {
+					$scope.parameters.map[parameterId].isActive = true;
+				}
+			});
 
-        $scope.onParameterSelectionChanged = function(parameterId) {
-			var index = $scope.chart.series.indexOf($scope.chart.series.filter(function(series) {
-				return series.parameterId == parameterId;
-			})[0]);
-			if(index > -1) {
-				$scope.chart.series.splice(index, 1)
-			} else {
-				$scope.chart.series.push(Visualizer.getDataForParameter(parameterId));
-			}
-			$scope.chart.series = angular.copy($scope.chart.series);
-			Visualizer.saveSelectedParameters($scope.chart.series.map(function(series) {
-				return series.parameterId;
-			}));
+			redraw();
+		}
+
+		function redraw() {
+			$scope.chart.series = [];
+			var parameterIds = [];
+			$scope.parameters.list.forEach(function(parameter) {
+				if(parameter.isActive) {
+					parameter.data = Visualizer.getDataForParameter(parameter.id);
+					$scope.chart.series.push(parameter);
+					parameterIds.push(parameter.id);
+				}
+			});
+			Visualizer.saveSelectedParameters(parameterIds);
+		}
+
+		$scope.showPopup = function() {
+			var myPopup = $ionicPopup.show({
+				templateUrl: 'templates/visualizer/selectParams.html',
+				title: 'Select Parameters',
+				scope: $scope,
+				buttons: [{ text: 'Done' }]
+			});
+			myPopup.then(function(res) {
+				redraw();
+			});
 		};
 
-		$scope.remove = function(series) {
-			$scope.chart.series.splice($scope.chart.series.indexOf(series), 1);
-			$scope.chart.series = angular.copy($scope.chart.series);
-			Visualizer.saveSelectedParameters($scope.chart.series.map(function(series) {
-				return series.parameterId;
-			}));
-		}
+		initialize();
 
     }]);

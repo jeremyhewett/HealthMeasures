@@ -1,9 +1,9 @@
 
 angular.module('HealthMeasures.test')
 
-	.factory('MeasurementsMockData', [function() {
+	.factory('EntryMockData', [function() {
 
-		var measurementsMockData = {
+		var entryMockData = {
 
 			O2: [
 				{
@@ -88,16 +88,16 @@ angular.module('HealthMeasures.test')
 
 		};
 
-		return measurementsMockData;
+		return entryMockData;
 	}])
 
-	.run(['Config', 'Storage', 'MeasurementsMockData', function(Config, Storage, MeasurementsMockData) {
+	.run(['Config', 'Storage', 'EntryMockData', function(Config, Storage, EntryMockData) {
 
 		if(Config.injectMockData) {
-			angular.forEach(MeasurementsMockData, function(data, key) {
-				Storage.deleteAll('measurements.' + key);
+			angular.forEach(EntryMockData, function(data, key) {
+				Storage.deleteAll('entries.' + key);
 				data.forEach(function(entry) {
-					Storage.insert('measurements.' + key, entry);
+					Storage.insert('entries.' + key, entry);
 				});
 			});
 		}

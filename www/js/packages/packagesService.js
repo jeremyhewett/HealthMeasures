@@ -1,14 +1,14 @@
 angular.module('HealthMeasures.packages')
 
-	.factory('Packages', ['Measurements', 'Settings', function(Measurements, Settings) {
+	.factory('Packages', ['ParameterService', 'Settings', function(ParameterService, Settings) {
 
 		var packages = {
 
 			infantHeart: {
 				parameters: [
-					Measurements.parameters.weight,
-					Measurements.parameters.O2,
-					Measurements.parameters.feeds
+					ParameterService.parameterTypes.weight,
+					ParameterService.parameterTypes.O2,
+					ParameterService.parameterTypes.feeds
 				]
 			}
 

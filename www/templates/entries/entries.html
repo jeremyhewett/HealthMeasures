@@ -1,7 +1,7 @@
-<ion-view title="{{parameter.id}}">
+<ion-view title="{{parameter.displayName}}">
   <ion-content class="has-header">
 
-    <form ng-submit="saveMeasurement()">
+    <form ng-submit="saveEntry()">
       <div class="list">
         <div class="item item-input">
           <div inline ng-switch="parameter.type">
@@ -16,7 +16,7 @@
       </div>
     </form>
 
-    <ion-list class="measurement-list">
+    <ion-list class="entry-list">
       <ion-item ng-repeat="entry in entries track by $index" type="item-text-wrap">
         <span class="timestamp">{{entry.timeStamp | dateTime}}</span>
         <span class="value">{{entry.value}}<span> {{parameter.units}}</span></span>

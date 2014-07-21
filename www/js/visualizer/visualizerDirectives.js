@@ -81,9 +81,9 @@ angular.module('HealthMeasures.visualizer')
 						.attr("transform", "translate(0," + plotHeight + ")")
 						.call(xAxis);
 
-					$scope.series.forEach(function(data, i) {
+					$scope.series.forEach(function(parameter, i) {
 
-						var values = data.values.filter(function(d) {
+						var values = parameter.data.filter(function(d) {
 							return xValue(d) >= $scope.config.from && xValue(d) <= $scope.config.to;
 						});
 
@@ -100,7 +100,7 @@ angular.module('HealthMeasures.visualizer')
 
 						// draw series
 						var gSeries = gPlot.append("g")
-							.attr("class", data.yAxis);
+							.attr("class", parameter.displayName);
 
 						gSeries.selectAll(".dot")
 							.data(values)

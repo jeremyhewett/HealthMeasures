@@ -5,10 +5,10 @@
 .select-no-label {
   padding: 20px 18px 10px 18px;
 }
-.measurement-list .item .timestamp {
+.entry-list .item .timestamp {
   color: grey;
 }
-.measurement-list .item .value {
+.entry-list .item .value {
   float: right;
 }
 .chart-close-container {
