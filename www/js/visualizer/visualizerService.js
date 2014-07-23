@@ -1,6 +1,8 @@
 angular.module('HealthMeasures.visualizer')
 
-    .factory('Visualizer', ['D3', 'Diary', 'Measurements', function(d3, Diary, Measurements) {
+    .factory('Visualizer', ['D3', 'Diary', 'EntryService', 'Storage', function(d3, Diary, EntryService, Storage) {
+
+		var storageKey = 'visualizer.series';
 
         var visualizerService = {
 
@@ -20,20 +22,29 @@ angular.module('HealthMeasures.visualizer')
             },
 
 			getDataForParameter: function(parameterId) {
-				var parameter = Measurements.parameters[parameterId];
-				var entries = Measurements(parameterId).getEntries();
-				var data = {
-					xAxis: 'Date',
-					yAxis: parameter.displayName,
-					units: parameter.units
-				};
-				data.values = entries.map(function(entry) {
-					return {
-						x: entry.timeStamp,
-						y: entry.value
-					};
-				});
-				return data;
+				return EntryService(parameterId).getEntries()
+					.map(function(entry) {
+						return {
+							x: entry.timeStamp,
+							y: entry.value
+						};
+					});
+			},
+
+			saveSelectedParameters: function(series) {
+				var storedSeries = Storage.selectAll(storageKey);
+				if(storedSeries.length > 0) {
+					return Storage.update(storageKey, {
+						id: storedSeries[0].id,
+						series: series
+					});
+				}
+				return Storage.insert(storageKey, {series: series});
+			},
+
+			loadSelectedParameters: function() {
+				var storedSeries = Storage.selectAll(storageKey)[0];
+				return storedSeries ? storedSeries.series : [];
 			}
 
         };

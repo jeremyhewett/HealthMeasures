@@ -1,4 +1,6 @@
 
+@clickable-grey: #999;
+
 .scroll {
   min-height: 100%;
   height: 1px;
@@ -8,11 +10,23 @@
   padding: 20px 18px 10px 18px;
 }
 
-.measurement-list .item {
+.entry-list .item {
   .timestamp {
     color: grey;
   }
   .value {
     float: right;
+  }
+}
+
+.chart-close-container {
+  float: right;
+  position: relative;
+  margin: 0 10px -23px 0;
+
+  .chart-close {
+    color: @clickable-grey;
+    font-size: 20px;
+    cursor: pointer;
   }
 }

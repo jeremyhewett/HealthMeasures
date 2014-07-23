@@ -4,18 +4,17 @@ angular.module('HealthMeasures', [
 	'HealthMeasures.common',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
-	'HealthMeasures.controllers',
 	'HealthMeasures.services',
 	'HealthMeasures.settings',
 	'HealthMeasures.packages',
 	'HealthMeasures.diary',
-	'HealthMeasures.measurements',
+	'HealthMeasures.entries',
 	'HealthMeasures.visualizer'
 ])
 
 	.constant('Config', {
 		apiUrl: 'http://localhost:80/api',
-		injectMockData: true,
+		injectMockData: true
 	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
@@ -45,21 +44,30 @@ angular.module('HealthMeasures', [
 				}
 			})
 
-			.state('tab.measurements', {
-				url: '/measurements',
+//			.state('tab.entries.select', {
+//				url: '/entries',
+//				views: {
+//					'tab-entries': {
+//						templateUrl: 'templates/entries/selectParameter.html',
+//						controller: 'SelectParameterController'
+//					}
+//				}
+//			})
+			.state('tab.selectParameter', {
+				url: '/entries',
 				views: {
-					'tab-measurements': {
-						templateUrl: 'templates/measurements/measurements.html',
-						controller: 'MeasurementsController'
+					'tab-entries': {
+						templateUrl: 'templates/entries/selectParameter.html',
+						controller: 'SelectParameterController'
 					}
 				}
 			})
-			.state('tab.measurement-values', {
-				url: '/measurements/:parameter',
+			.state('tab.entries', {
+				url: '/entries/:parameterId',
 				views: {
-					'tab-measurements': {
-						templateUrl: 'templates/measurements/measurementValues.html',
-						controller: 'MeasurementValuesController'
+					'tab-entries': {
+						templateUrl: 'templates/entries/entries.html',
+						controller: 'EntryController'
 					}
 				}
 			})
