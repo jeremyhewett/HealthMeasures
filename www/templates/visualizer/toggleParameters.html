@@ -3,7 +3,7 @@
   <li class="item item-toggle" ng-repeat="param in parameters.map">
     {{param.displayName}}
     <label class="toggle toggle-balanced">
-      <input type="checkbox" ng-model="param.isActive">
+      <input type="checkbox" ng-model="param.isActive" ng-disabled="activeParameters().length >= 3 && !param.isActive">
       <div class="track">
         <div class="handle"></div>
       </div>

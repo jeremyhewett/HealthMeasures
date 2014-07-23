@@ -14,6 +14,10 @@ angular.module('HealthMeasures.visualizer')
 				var $elem = $(elem);
 
 				var style = '<style>\
+						.text {\
+							stroke: none;\
+							fill: #000;\
+						}\
 						.axis path,\
 						.axis line {\
 							fill: none;\
@@ -26,11 +30,15 @@ angular.module('HealthMeasures.visualizer')
 						.line {\
 							fill: none;\
 						}\
+						.legend {\
+							fill: none;\
+						}\
 					</style>';
 
-				var svgPadding = {top: 10, right: 30, bottom: 25, left: 30};
-				var plotMargin = {top: 0, right: 80, bottom: 0, left: 0};
-				var yBuffer = 6;
+				var svgPadding = {top: 10, right: 20, bottom: 25, left: 30};
+				var plotMargin = {top: 0, right: 110, bottom: 0, left: 0};
+				var legendMargin = {top: 0, right: 0, bottom: 0, left: 20};
+				var yBuffer = 5;
 
 				// setup x
 				var xValue = function(d) { return d.x; }, // data -> value
@@ -39,23 +47,23 @@ angular.module('HealthMeasures.visualizer')
 
 				// setup y
 				var yValue = function(d) { return d.y; }, // data -> value
-					yScale, yMap, yAxis;
+					yScale, yMap;
 
 				// setup fill color scale
-				var	color = d3.scale.category10();
+				var	colors = ['#423A38', '#47B8C8', '#BDB9B0'];
 
 				// add the graph canvas to the body of the webpage
 				var svg = d3.select($elem[0])
 					.append("g")
 					.attr("transform", "translate(" + svgPadding.left + "," + svgPadding.top + ")");
 
-				var gPlot = svg.append("g")
-					.attr("transform", "translate(" + plotMargin.left + "," + plotMargin.top + ")");
-
 				function redraw() {
-					gPlot.selectAll("*").remove(); //Clear the plot area
+					svg.selectAll("*").remove(); //Clear the plot area
 
 					if(!$scope.series || ! $scope.series.length) return;
+
+					var gPlot = svg.append("g")
+						.attr("transform", "translate(" + plotMargin.left + "," + plotMargin.top + ")");
 
 					var svgWidth = $elem.parent().width();
 					var svgHeight = $elem.parent().height();
@@ -71,9 +79,11 @@ angular.module('HealthMeasures.visualizer')
 					xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickValues([$scope.config.from, $scope.config.to]).tickFormat(xTickFormat);
 
 					yScale = d3.scale.linear().domain([0, 100]).range([plotHeight, 0]);
-					yAxis = d3.svg.axis().scale(yScale).orient("left").tickValues([]);
 
 					$elem.append(style);
+
+					var gLegend = svg.append("g")
+						.attr("transform", "translate(" + (plotMargin.left + plotWidth + legendMargin.left) + "," + plotMargin.top + ")");
 
 					// x-axis
 					gPlot.append("g")
@@ -89,18 +99,17 @@ angular.module('HealthMeasures.visualizer')
 
 						var yMin = d3.min(values, yValue);
 						var yMax = d3.max(values, yValue);
-						var bottomBuffer = i == 0 ? yBuffer : yBuffer / 2;
-						var topBuffer = i == $scope.series.length - 1 ? yBuffer : yBuffer / 2;
-						var valueScale = d3.scale.linear().domain([yMin, yMax]).range([(i * 100 / $scope.series.length) + bottomBuffer, ((i + 1) * 100 / $scope.series.length) - topBuffer]);
-						yMap = function(d) { return yScale(valueScale(yValue(d))); }; // data -> display
+						var yRange = [(i * 100 / $scope.series.length) + yBuffer, ((i + 1) * 100 / $scope.series.length) - yBuffer];
+						var paramScale = d3.scale.linear().domain([yMin, yMax]).range([yScale(yRange[0]), yScale(yRange[1])]);
+						yMap = function(d) { return paramScale(yValue(d)); };
 
 						var line = d3.svg.line()
 							.x(function(d) { return xScale(xValue(d)); })
-							.y(function(d) { return yScale(valueScale(yValue(d))); });
+							.y(function(d) { return paramScale(yValue(d)); });
 
 						// draw series
 						var gSeries = gPlot.append("g")
-							.attr("class", parameter.displayName);
+							.attr("class", parameter.id);
 
 						gSeries.selectAll(".dot")
 							.data(values)
@@ -109,13 +118,27 @@ angular.module('HealthMeasures.visualizer')
 							.attr("r", 5)
 							.attr("cx", xMap)
 							.attr("cy", yMap)
-							.style("fill", color(i));
+							.style("fill", colors[i]);
 
 						gSeries.append("path")
 							.datum(values)
 							.attr("class", "line")
-							.style("stroke", color(i))
+							.style("stroke", colors[i])
 							.attr("d", line);
+
+						var yAxis = d3.svg.axis().scale(paramScale).orient("right")
+						if(values.length) yAxis.tickValues([yMin, yMax]);
+						gLegend.append("g")
+							.attr("class", "y axis")
+							.call(yAxis)
+							.append("text")
+							.attr("class", "label")
+							.attr("x", 10)
+							.attr("y", paramScale.range()[1] + (paramScale.range()[0] - paramScale.range()[1]) / 2)
+							.attr("dy", ".3em")
+							.style("text-anchor", "center")
+							.style('fill', colors[i])
+							.text(parameter.shortName + " (" + parameter.units + ")" );
 
 					});
 

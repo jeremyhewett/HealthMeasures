@@ -17,12 +17,9 @@ angular.module('HealthMeasures.visualizer')
 
 		function initialize() {
 			angular.forEach(ParameterService.parameterTypes, function(type) {
-				var parameter = {
-					id: type.id,
-					displayName: type.displayName,
-					units: type.units,
+				var parameter = angular.extend(angular.copy(type), {
 					isActive: false
-				};
+				});
 				$scope.parameters.map[type.id] = parameter;
 				$scope.parameters.list.push(parameter);
 			});
@@ -49,9 +46,15 @@ angular.module('HealthMeasures.visualizer')
 			Visualizer.saveSelectedParameters(parameterIds);
 		}
 
+		$scope.activeParameters = function() {
+			return $scope.parameters.list.filter(function(parameter) {
+				return parameter.isActive;
+			})
+		};
+
 		$scope.showPopup = function() {
 			var myPopup = $ionicPopup.show({
-				templateUrl: 'templates/visualizer/selectParams.html',
+				templateUrl: 'templates/visualizer/toggleParameters.html',
 				title: 'Select Parameters',
 				scope: $scope,
 				buttons: [{ text: 'Done' }]

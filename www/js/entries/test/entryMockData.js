@@ -84,6 +84,33 @@ angular.module('HealthMeasures.test')
 					timeStamp: moment('27 Jun, 2014').valueOf(),
 					value: 180
 				}
+			],
+
+			temperature: [
+				{
+					timeStamp: moment('22 Jun, 2014').valueOf(),
+					value: 36
+				},
+				{
+					timeStamp: moment('23 Jun, 2014').valueOf(),
+					value: 38
+				},
+				{
+					timeStamp: moment('24 Jun, 2014').valueOf(),
+					value: 39
+				},
+				{
+					timeStamp: moment('25 Jun, 2014').valueOf(),
+					value: 39
+				},
+				{
+					timeStamp: moment('26 Jun, 2014').valueOf(),
+					value: 37
+				},
+				{
+					timeStamp: moment('27 Jun, 2014').valueOf(),
+					value: 37
+				}
 			]
 
 		};

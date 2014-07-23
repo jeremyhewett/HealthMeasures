@@ -16,7 +16,7 @@ angular.module('HealthMeasures.common')
 			O2: {
 				id: 'O2',
 				displayName: 'O2 Saturation',
-				shortName: 'O2 Sat',
+				shortName: 'O2 Sat.',
 				type: DataType.number,
 				units: '%',
 				range: [0, 100]
@@ -29,6 +29,15 @@ angular.module('HealthMeasures.common')
 				type: DataType.number,
 				units: 'ml',
 				range: [0, null]
+			},
+
+			temperature: {
+				id: 'temperature',
+				displayName: 'Temperature',
+				shortName: 'Temp.',
+				type: DataType.number,
+				units: '°C',
+				range: [35, 45]
 			}
 
 		};
