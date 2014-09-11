@@ -1,38 +1,83 @@
 angular.module('HealthMeasures.entries')
 
-	.factory('EntryService', ['Storage', function(Storage) {
+	.factory('EntryService', function($q, Database) {
 
-		var entryService = function(parameterId) {
-
-			return {
-
-				getEntries: function() {
-					var entries = Storage.selectAll('entries.' + parameterId);
-					return entries.sort(function(a, b) {
+		function loadEntries(parameterId) {
+			var deferred = $q.defer();
+			Database.search({
+				module: 'entries',
+				parameter: parameterId
+			}).then(function(entries) {
+				deferred.resolve(
+					entries.sort(function(a, b) {
 						return b.timeStamp - a.timeStamp;
-					});
-				},
+					})
+				);
+			}).catch(function(error) {
+				deferred.reject(error);
+			});
+			return deferred.promise;
+		}
 
-				saveValue: function(value) {
-					var entry = {
-						timeStamp: moment().valueOf(),
-						value: value
-					};
-					var entries = Storage.insert('entries.' + parameterId, entry);
-					return entries.sort(function(a, b) {
-						return b.timeStamp - a.timeStamp;
-					});
-				},
+		var entryService = {
 
-				deleteEntry: function(entry) {
-					var entries = Storage.delete('entries.' + parameterId, entry.id);
-					return entries.sort(function(a, b) {
-						return b.timeStamp - a.timeStamp;
-					});
-				}
+			load: function(parameterId) {
 
-			};
+				var entries;
+
+				var api = {
+
+					getEntries: function() {
+						var deferred = $q.defer();
+						deferred.resolve(entries);
+						return deferred.promise;
+					},
+
+					saveValue: function(value) {
+						var deferred = $q.defer();
+						var entry = {
+							module: 'entries',
+							parameter: parameterId,
+							timeStamp: moment().valueOf(),
+							value: value
+						};
+						Database.put(entry).then(function(entry) {
+							entries.push(entry);
+							entries.sort(function(a, b) {
+								return b.timeStamp - a.timeStamp;
+							});
+							deferred.resolve(entries);
+						}).catch(function(error) {
+							deferred.reject(error);
+						});
+						return deferred.promise;
+					},
+
+					deleteEntry: function(entry) {
+						var deferred = $q.defer();
+						Database.delete(entry).then(function(entry) {
+							entries.splice(entries.indexOf(entry), 1);
+							deferred.resolve(entries);
+						}).catch(function(error) {
+							deferred.reject(error);
+						});
+						return deferred.promise;
+					}
+
+				};
+
+				var deferred = $q.defer();
+
+				loadEntries(parameterId).then(function(allEntries) {
+					entries = allEntries;
+					deferred.resolve(api);
+				}).catch(function(error) {
+					deferred.reject(error);
+				});
+
+				return deferred.promise;
+			}
 		};
 
 		return entryService;
-	}]);
+	});
