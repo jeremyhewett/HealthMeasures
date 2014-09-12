@@ -68,6 +68,28 @@ angular.module('HealthMeasures.common')
 				return deferred.promise;
 			},
 
+			putAll: function(docs) {
+				var deferred = $q.defer();
+				docs.forEach(function(doc) {
+					doc._id = doc._id || PouchDB.utils.uuid();
+				});
+				db.bulkDocs(docs).then(function(docs) {
+					var keys = docs.map(function(doc) {
+						return doc.id;
+					});
+					db.allDocs({keys: keys, include_docs: true}).then(function(response) {
+						deferred.resolve(response.rows.map(function(row) {
+							return row.doc;
+						}));
+					}).catch(function(error) {
+						deferred.reject(error);
+					});
+				}).catch(function(error) {
+					deferred.reject(error);
+				});
+				return deferred.promise;
+			},
+
 			'delete': function(doc) {
 				var deferred = $q.defer();
 				db.get(doc._id).then(function(doc) {
@@ -76,6 +98,19 @@ angular.module('HealthMeasures.common')
 					}).catch(function(error) {
 						deferred.reject(error);
 					});
+				}).catch(function(error){
+					deferred.reject(error);
+				});
+				return deferred.promise;
+			},
+
+			deleteAll: function(docs) {
+				var deferred = $q.defer();
+				docs.forEach(function(doc) {
+					doc._deleted = true;
+				});
+				db.bulkDocs(docs).then(function(response) {
+					deferred.resolve(response);
 				}).catch(function(error){
 					deferred.reject(error);
 				});

@@ -44,15 +44,6 @@ angular.module('HealthMeasures', [
 				}
 			})
 
-//			.state('tab.entries.select', {
-//				url: '/entries',
-//				views: {
-//					'tab-entries': {
-//						templateUrl: 'templates/entries/selectParameter.html',
-//						controller: 'SelectParameterController'
-//					}
-//				}
-//			})
 			.state('tab.selectParameter', {
 				url: '/entries',
 				views: {
@@ -67,7 +58,12 @@ angular.module('HealthMeasures', [
 				views: {
 					'tab-entries': {
 						templateUrl: 'templates/entries/entries.html',
-						controller: 'EntryController'
+						controller: 'EntryController',
+						resolve: {
+							asyncDependencies: function(EntryMockData) {
+								return EntryMockData.init();
+							}
+						}
 					}
 				}
 			})

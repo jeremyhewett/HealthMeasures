@@ -1,3 +1,4 @@
+
 angular.module('HealthMeasures.entries')
 
 	.factory('EntryService', function($q, Database) {
