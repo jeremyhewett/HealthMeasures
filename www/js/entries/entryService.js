@@ -3,26 +3,9 @@ angular.module('HealthMeasures.entries')
 
 	.factory('EntryService', function($q, Database) {
 
-		function loadEntries(parameterId) {
-			var deferred = $q.defer();
-			Database.search({
-				module: 'entries',
-				parameter: parameterId
-			}).then(function(entries) {
-				deferred.resolve(
-					entries.sort(function(a, b) {
-						return b.timeStamp - a.timeStamp;
-					})
-				);
-			}).catch(function(error) {
-				deferred.reject(error);
-			});
-			return deferred.promise;
-		}
-
 		var entryService = {
 
-			load: function(parameterId) {
+			forParameter: function(parameterId) {
 
 				var entries;
 
@@ -30,7 +13,15 @@ angular.module('HealthMeasures.entries')
 
 					getEntries: function() {
 						var deferred = $q.defer();
-						deferred.resolve(entries);
+						Database.search({
+							module: 'entries',
+							parameter: parameterId
+						}, ['timeStamp']).then(function(response) {
+							entries = response.reverse();
+							deferred.resolve(entries);
+						}).catch(function(error) {
+							deferred.reject(error);
+						});
 						return deferred.promise;
 					},
 
@@ -42,8 +33,8 @@ angular.module('HealthMeasures.entries')
 							timeStamp: moment().valueOf(),
 							value: value
 						};
-						Database.put(entry).then(function(entry) {
-							entries.push(entry);
+						Database.put(entry).then(function(entity) {
+							entries.push(entity);
 							entries.sort(function(a, b) {
 								return b.timeStamp - a.timeStamp;
 							});
@@ -56,7 +47,7 @@ angular.module('HealthMeasures.entries')
 
 					deleteEntry: function(entry) {
 						var deferred = $q.defer();
-						Database.delete(entry).then(function(entry) {
+						Database.delete(entry).then(function(entity) {
 							entries.splice(entries.indexOf(entry), 1);
 							deferred.resolve(entries);
 						}).catch(function(error) {
@@ -67,16 +58,7 @@ angular.module('HealthMeasures.entries')
 
 				};
 
-				var deferred = $q.defer();
-
-				loadEntries(parameterId).then(function(allEntries) {
-					entries = allEntries;
-					deferred.resolve(api);
-				}).catch(function(error) {
-					deferred.reject(error);
-				});
-
-				return deferred.promise;
+				return api;
 			}
 		};
 

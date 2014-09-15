@@ -7,34 +7,29 @@ angular.module('HealthMeasures.entries')
 
 		var entryService;
 
-		EntryService.load($scope.parameter.id).then(function(api) {
-			entryService = api;
-			init();
+		entryService = EntryService.forParameter($scope.parameter.id);
+
+		entryService.getEntries().then(function(entries) {
+			$scope.entries = entries;
+		}).catch(function(error) {
+			console.error(error.message);
 		});
 
-		function init() {
-			entryService.getEntries().then(function(entries) {
+		$scope.saveEntry = function() {
+			entryService.saveValue($scope.entry.value).then(function(entries) {
 				$scope.entries = entries;
 			}).catch(function(error) {
 				console.error(error.message);
 			});
+			$scope.entry.value = '';
+		};
 
-			$scope.saveEntry = function() {
-				entryService.saveValue($scope.entry.value).then(function(entries) {
-					$scope.entries = entries;
-				}).catch(function(error) {
-					console.error(error.message);
-				});
-				$scope.entry.value = '';
-			};
-
-			$scope.delete = function(entry) {
-				entryService.deleteEntry(entry).then(function(entries) {
-					$scope.entries = entries;
-				}).catch(function(error) {
-					console.error(error.message);
-				});
-			};
-		}
+		$scope.deleteEntry = function(entry) {
+			entryService.deleteEntry(entry).then(function(entries) {
+				$scope.entries = entries;
+			}).catch(function(error) {
+				console.error(error.message);
+			});
+		};
 
 	}]);

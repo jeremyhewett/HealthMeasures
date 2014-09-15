@@ -1,12 +1,24 @@
 <ion-view title="{{parameter.displayName}}">
   <ion-content class="has-header">
 
-    <form ng-submit="saveEntry()">
+    <form name="entryForm" ng-submit="saveEntry()">
       <div class="list">
         <div class="item item-input">
           <div inline ng-switch="parameter.type">
-            <input ng-switch-when="number" type="number" placeholder="Enter {{parameter.displayName}}" ng-model="entry.value">
-            <input ng-switch-default type="text" placeholder="Enter {{parameter.displayName}}" ng-model="entry.value">
+            <input ng-switch-when="number"
+                   type="number"
+                   ng-model="entry.value"
+                   required
+                   placeholder="Enter {{parameter.displayName}}"
+                   name="value"
+                   ng-class="{'has-error': entryForm.value.$invalid}">
+            <input ng-switch-default
+                   type="text"
+                   ng-model="entry.value"
+                   required
+                   placeholder="Enter {{parameter.displayName}}"
+                   name="value"
+                   ng-class="{'has-error': entryForm.value.$invalid}">
           </div>
           <span>({{parameter.units}})</span>
         </div>
@@ -20,7 +32,7 @@
       <ion-item ng-repeat="entry in entries track by $index" type="item-text-wrap">
         <span class="timestamp">{{entry.timeStamp | dateTime}}</span>
         <span class="value">{{entry.value}}<span> {{parameter.units}}</span></span>
-        <ion-option-button class="button-assertive" ng-click="delete(entry)">
+        <ion-option-button class="button-assertive" ng-click="deleteEntry(entry)">
           Delete
         </ion-option-button>
       </ion-item>

@@ -1,54 +1,75 @@
 angular.module('HealthMeasures.visualizer')
 
-    .factory('Visualizer', ['D3', 'Diary', 'EntryService', 'Storage', function(d3, Diary, EntryService, Storage) {
+    .factory('Visualizer', function($q, D3, Diary, Database, EntryService) {
 
-		var storageKey = 'visualizer.series';
+		function getOrCreate(criteria) {
+			var deferred = $q.defer();
+			Database.search(criteria).then(function(records) {
+				if(records.length) {
+					deferred.resolve(records[0]);
+				} else {
+					Database.put(criteria).then(function(entity) {
+						deferred.resolve(entity);
+					}).catch(function(error) {
+						deferred.reject(error);
+					});
+				}
+			}).catch(function(error) {
+				deferred.reject(error);
+			});
+			return deferred.promise;
+		}
 
         var visualizerService = {
 
-            getDiaryData: function() {
-                var diaryEntries = Diary.getAllEntries();
-				var data = {
-					xAxis: 'Date',
-					yAxis: 'Entry length'
-				};
-                data.values = diaryEntries.map(function(entry) {
-                    return {
-                        x: entry.timeStamp,
-                        y: entry.narrative.length
-                    };
-                });
-				return data;
-            },
-
-			getDataForParameter: function(parameterId) {
-				return EntryService(parameterId).getEntries()
-					.map(function(entry) {
+            getDataForParameter: function(parameterId) {
+				var deferred = $q.defer();
+				EntryService.forParameter(parameterId).getEntries().then(function(entries) {
+					deferred.resolve(entries.map(function(entry) {
 						return {
 							x: entry.timeStamp,
 							y: entry.value
 						};
-					});
+					}));
+				}).catch(function(error) {
+					deferred.reject(error);
+				});
+				return deferred.promise;
 			},
 
-			saveSelectedParameters: function(series) {
-				var storedSeries = Storage.selectAll(storageKey);
-				if(storedSeries.length > 0) {
-					return Storage.update(storageKey, {
-						id: storedSeries[0].id,
-						series: series
+			saveSelectedParameters: function(parameters) {
+				var deferred = $q.defer();
+				getOrCreate({
+					module: 'visualizer',
+					key: 'series'
+				}).then(function(entity) {
+					entity.value = parameters;
+					Database.put(entity).then(function(entity) {
+						deferred.resolve(entity.value);
+					}).catch(function(error) {
+						deferred.reject(error);
 					});
-				}
-				return Storage.insert(storageKey, {series: series});
+				}).catch(function(error) {
+					deferred.reject(error);
+				});
+				return deferred.promise;
 			},
 
 			loadSelectedParameters: function() {
-				var storedSeries = Storage.selectAll(storageKey)[0];
-				return storedSeries ? storedSeries.series : [];
+				var deferred = $q.defer();
+				getOrCreate({
+					module: 'visualizer',
+					key: 'series'
+				}).then(function(entity) {
+					deferred.resolve(entity.value || []);
+				}).catch(function(error) {
+					deferred.reject(error);
+				});
+				return deferred.promise;
 			}
 
         };
 
         return visualizerService;
 
-    }]);
+    });

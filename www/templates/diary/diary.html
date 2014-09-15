@@ -4,7 +4,7 @@
     <form ng-submit="saveEntry()">
       <div class="list">
         <label class="item item-input">
-          <input type="text" placeholder="Describe your symptoms" ng-model="entry.narrative">
+          <input type="text" placeholder="Describe your symptoms" ng-model="entry.text">
         </label>
       </div>
       <div class="padding">
@@ -13,10 +13,10 @@
     </form>
 
     <ion-list>
-      <ion-item ng-repeat="entry in allEntries track by $index" type="item-text-wrap">
+      <ion-item ng-repeat="entry in entries track by $index" type="item-text-wrap">
         <span>{{entry.timeStamp | dateTime}}</span>
         <br>
-        <span>{{entry.narrative}}</span>
+        <span>{{entry.text}}</span>
       </ion-item>
     </ion-list>
 

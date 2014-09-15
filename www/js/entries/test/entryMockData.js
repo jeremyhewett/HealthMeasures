@@ -116,27 +116,30 @@ angular.module('HealthMeasures.test')
 
 			},
 
-			init: function() {
-				var deferred = $q.defer();
+			initialize: function() {
+				return initialized;
+			}
 
-				if(Config.injectMockData) {
-					var entries = [];
-					angular.forEach(service.data, function(data, key) {
-						entries = entries.concat(data.map(function(entry) {
-							return angular.extend(entry, {module: 'entries', parameter: key});
-						}));
-					});
+		};
 
-					Database.search({
-						module: 'entries'
-					}).then(function(oldEntries) {
-						Database.deleteAll(oldEntries).then(function() {
-							Database.putAll(entries).then(function(entries) {
-								deferred.resolve(entries);
-							}).catch(function(error) {
-								console.error(error);
-								deferred.resolve();
-							});
+		var deferred = $q.defer();
+		var initialized = deferred.promise;
+
+		(function() {
+			if(Config.injectMockData) {
+				var entries = [];
+				angular.forEach(service.data, function(data, key) {
+					entries = entries.concat(data.map(function(entry) {
+						return angular.extend(entry, {module: 'entries', parameter: key});
+					}));
+				});
+
+				Database.search({
+					module: 'entries'
+				}).then(function(oldEntries) {
+					Database.deleteAll(oldEntries).then(function() {
+						Database.putAll(entries).then(function(entries) {
+							deferred.resolve(entries);
 						}).catch(function(error) {
 							console.error(error);
 							deferred.resolve();
@@ -145,20 +148,14 @@ angular.module('HealthMeasures.test')
 						console.error(error);
 						deferred.resolve();
 					});
-				} else {
+				}).catch(function(error) {
+					console.error(error);
 					deferred.resolve();
-				}
-
-				return deferred.promise;
+				});
+			} else {
+				deferred.resolve();
 			}
-
-		};
+		})();
 
 		return service;
-	})
-
-	.run(['Config', 'Storage', 'EntryMockData', function(Config, Database, EntryMockData) {
-
-
-
-	}]);
+	});

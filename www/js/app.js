@@ -61,7 +61,7 @@ angular.module('HealthMeasures', [
 						controller: 'EntryController',
 						resolve: {
 							asyncDependencies: function(EntryMockData) {
-								return EntryMockData.init();
+								return EntryMockData.initialize();
 							}
 						}
 					}
@@ -73,7 +73,12 @@ angular.module('HealthMeasures', [
 				views: {
 					'tab-diary': {
 						templateUrl: 'templates/diary/diary.html',
-						controller: 'DiaryController'
+						controller: 'DiaryController',
+						resolve: {
+							asyncDependencies: function(DiaryMockData) {
+								return DiaryMockData.initialize();
+							}
+						}
 					}
 				}
 			})

@@ -1,25 +1,44 @@
 angular.module('HealthMeasures.diary')
 
-.factory('Diary', ['Storage', function(Storage) {
+.factory('Diary', function($q, Database) {
 
-		var key = 'diary.entries';
+		var entries = [];
 
 		var diaryService = {
 
-            getAllEntries: function() {
-				return Storage.selectAll(key).sort(function(a, b) {
-					return b.timeStamp - a.timeStamp;
+            getEntries: function() {
+				var deferred = $q.defer();
+				Database.search({
+					module: 'diary'
+				}, ['timeStamp']).then(function(response) {
+					entries = response.reverse();
+					deferred.resolve(entries);
+				}).catch(function(error) {
+					deferred.reject(error);
 				});
+				return deferred.promise;
             },
 
-            saveEntry: function(entry) {
-                var entries = Storage.insert(key, entry);
-				return entries.sort(function(a, b) {
-					return b.timeStamp - a.timeStamp;
+            saveEntry: function(text) {
+				var deferred = $q.defer();
+				var entry = {
+					module: 'diary',
+					timeStamp: moment().valueOf(),
+					text: text
+				};
+				Database.put(entry).then(function(entry) {
+					entries.push(entry);
+					entries.sort(function(a, b) {
+						return b.timeStamp - a.timeStamp;
+					});
+					deferred.resolve(entries);
+				}).catch(function(error) {
+					deferred.reject(error);
 				});
+				return deferred.promise;
             }
         };
 
         return diaryService;
 
-    }]);
+    });
