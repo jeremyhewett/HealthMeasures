@@ -2,7 +2,7 @@ angular.module('HealthMeasures.user')
 
 	.factory('User', [function($http, $q, Config) {
 
-		var registeredUser;
+		var registeredUser = {id: 'jeremy'};
 
 		var userService = {
 			register: function(user) {
@@ -21,8 +21,16 @@ angular.module('HealthMeasures.user')
 				return deferred.promise;
 			},
 
+			logout: function() {
+				registeredUser = undefined;
+			},
+
 			registeredUser: function() {
-				return {id: 'jeremy'};//registeredUser;
+				return registeredUser;
+			},
+
+			isAuthorized: function() {
+				return !!registeredUser;
 			}
 		};
 
