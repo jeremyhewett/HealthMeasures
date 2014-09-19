@@ -2,16 +2,18 @@ angular.module('HealthMeasures.diary')
 
 .controller('DiaryController', ['$scope', 'Diary', function($scope, Diary) {
 
-		$scope.allEntries = Diary.getAllEntries();
+		$scope.entry = {};
 
-        $scope.entry = {};
+		Diary.getEntries().then(function(entries) {
+			$scope.entries = entries;
+		}).catch(function(error) {
+			console.error(error);
+		});
 
-        $scope.saveEntry = function() {
-            Diary.saveEntry({
-                timeStamp: moment().valueOf(),
-                narrative: $scope.entry.narrative
-            });
-            $scope.entry.narrative = '';
-            $scope.allEntries = Diary.getAllEntries();
+		$scope.saveEntry = function() {
+            Diary.saveEntry($scope.entry.text).then(function(entries) {
+				$scope.entries = entries;
+			});
+            $scope.entry.text = '';
         };
     }]);

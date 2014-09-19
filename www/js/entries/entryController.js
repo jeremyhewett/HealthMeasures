@@ -3,16 +3,33 @@ angular.module('HealthMeasures.entries')
 	.controller('EntryController', ['$scope', '$stateParams', 'EntryService', 'ParameterService', function($scope, $stateParams, EntryService, ParameterService) {
 
 		$scope.parameter = ParameterService.parameterTypes[$stateParams.parameterId];
-		$scope.entries = EntryService($scope.parameter.id).getEntries();
 		$scope.entry = {};
 
+		var entryService;
+
+		entryService = EntryService.forParameter($scope.parameter.id);
+
+		entryService.getEntries().then(function(entries) {
+			$scope.entries = entries;
+		}).catch(function(error) {
+			console.error(error.message);
+		});
+
 		$scope.saveEntry = function() {
-			$scope.entries = EntryService($scope.parameter.id).saveValue($scope.entry.value);
+			entryService.saveValue($scope.entry.value).then(function(entries) {
+				$scope.entries = entries;
+			}).catch(function(error) {
+				console.error(error.message);
+			});
 			$scope.entry.value = '';
 		};
 
-		$scope.delete = function(entry) {
-			$scope.entries = EntryService($scope.parameter.id).deleteEntry(entry);
+		$scope.deleteEntry = function(entry) {
+			entryService.deleteEntry(entry).then(function(entries) {
+				$scope.entries = entries;
+			}).catch(function(error) {
+				console.error(error.message);
+			});
 		};
 
 	}]);

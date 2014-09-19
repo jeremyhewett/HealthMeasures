@@ -1,6 +1,8 @@
 angular.module('HealthMeasures.user')
 
-	.factory('User', ['$http', '$q', 'Config', function($http, $q, Config) {
+	.factory('User', [function($http, $q, Config) {
+
+		var registeredUser = {id: 'jeremy'};
 
 		var userService = {
 			register: function(user) {
@@ -9,6 +11,7 @@ angular.module('HealthMeasures.user')
 				$http.post(Config.apiUrl + '/user/register', user)
 					.success(function(response) {
 						user.id = response._id;
+						registeredUser = user;
 						deferred.resolve(user);
 					})
 					.error(function(response) {
@@ -16,6 +19,18 @@ angular.module('HealthMeasures.user')
 					});
 
 				return deferred.promise;
+			},
+
+			logout: function() {
+				registeredUser = undefined;
+			},
+
+			registeredUser: function() {
+				return registeredUser;
+			},
+
+			isAuthorized: function() {
+				return !!registeredUser;
 			}
 		};
 

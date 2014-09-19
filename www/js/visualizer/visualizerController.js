@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.visualizer')
 
-    .controller('VisualizerController', ['$ionicPopup', '$scope', 'ParameterService', 'Visualizer', function($ionicPopup, $scope, ParameterService, Visualizer) {
+    .controller('VisualizerController', function($ionicPopup, $q, $scope, ParameterService, Visualizer) {
 
 		$scope.parameters = {
 			list: [],
@@ -24,22 +24,38 @@ angular.module('HealthMeasures.visualizer')
 				$scope.parameters.list.push(parameter);
 			});
 
-			Visualizer.loadSelectedParameters().forEach(function(parameterId) {
-				if(parameterId && $scope.parameters.map[parameterId]) {
-					$scope.parameters.map[parameterId].isActive = true;
-				}
+			Visualizer.loadSelectedParameters().then(function(parameterIds) {
+				parameterIds.forEach(function(parameterId) {
+					if(parameterId && $scope.parameters.map[parameterId]) {
+						$scope.parameters.map[parameterId].isActive = true;
+					}
+				});
+				redraw();
+			}).catch(function(error) {
+				console.error(error);
 			});
-
-			redraw();
 		}
 
 		function redraw() {
 			$scope.chart.series = [];
 			var parameterIds = [];
+			var start = $q.defer();
+			start.resolve();
+			var promise = start.promise;
 			$scope.parameters.list.forEach(function(parameter) {
 				if(parameter.isActive) {
-					parameter.data = Visualizer.getDataForParameter(parameter.id);
-					$scope.chart.series.push(parameter);
+					var deferred = $q.defer();
+					promise.then(function() {
+						Visualizer.getDataForParameter(parameter.id).then(function(data) {
+							parameter.data = data;
+							$scope.chart.series.push(parameter);
+							deferred.resolve();
+						}).catch(function(error) {
+							console.error(error);
+							deferred.resolve();
+						});
+					});
+					promise = deferred.promise;
 					parameterIds.push(parameter.id);
 				}
 			});
@@ -59,11 +75,11 @@ angular.module('HealthMeasures.visualizer')
 				scope: $scope,
 				buttons: [{ text: 'Done' }]
 			});
-			myPopup.then(function(res) {
+			myPopup.then(function(response) {
 				redraw();
 			});
 		};
 
 		initialize();
 
-    }]);
+    });

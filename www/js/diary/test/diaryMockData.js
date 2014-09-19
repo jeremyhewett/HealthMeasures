@@ -1,41 +1,64 @@
 
 angular.module('HealthMeasures.test')
 
-	.factory('DiaryMockData', [function() {
+	.factory('DiaryMockData', function($q, Config, Database) {
 
-		var diaryMockData = {
+		var service = {
 
 			entries: [
 				{
 					timeStamp: moment('22 Jun, 2014').valueOf(),
-					narrative: 'This is my latest entry.'
+					text: 'This is my latest entry.'
 				},
 				{
 					timeStamp: moment('20 Jun, 2014').valueOf(),
-					narrative: 'This is my 2nd entry.'
+					text: 'This is my 2nd entry.'
 				},
 				{
 					timeStamp: moment('Jun 19, 2014').valueOf(),
-					narrative: 'This is my first entry.'
+					text: 'This is my first entry.'
 				},
 				{
 					timeStamp: moment('19 Jun, 2014').valueOf(),
-					narrative: 'Another entry.'
+					text: 'Another entry.'
 				}
-			]
+			],
+
+			initialize: function() {
+				return initialized;
+			}
 
 		};
 
-		return diaryMockData;
-	}])
+		var deferred = $q.defer();
+		var initialized = deferred.promise;
 
-	.run(['Config', 'Storage', 'DiaryMockData', function(Config, Storage, DiaryMockData) {
+		(function() {
+			if(Config.injectMockData) {
+				var entries = service.entries.map(function(entry) {
+					return angular.extend(entry, {module: 'diary'});
+				});
 
-		if(Config.injectMockData) {
-			Storage.deleteAll('diary.entries');
-			DiaryMockData.entries.forEach(function(entry) {
-				Storage.insert('diary.entries', entry);
-			});
-		}
+				Database.search({module: 'diary'}).then(function(oldEntries) {
+					Database.deleteAll(oldEntries).then(function() {
+						Database.putAll(entries).then(function(entries) {
+							deferred.resolve(entries);
+						}).catch(function(error) {
+							console.error(error);
+							deferred.resolve();
+						});
+					}).catch(function(error) {
+						console.error(error);
+						deferred.resolve();
+					});
+				}).catch(function(error) {
+					console.error(error);
+					deferred.resolve();
+				});
+			} else {
+				deferred.resolve();
+			}
+		})();
 
-	}]);
+		return service;
+	});
