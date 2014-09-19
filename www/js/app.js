@@ -37,7 +37,7 @@ angular.module('HealthMeasures', [
 			.state('app.authorize', {
 				url: '/authorize',
 				views: {
-					'auth': {
+					'app': {
 						templateUrl: 'templates/user/register.html',
 						controller: 'RegisterController'
 					}
@@ -49,7 +49,7 @@ angular.module('HealthMeasures', [
 				url: "/tab",
 				abstract: true,
 				views: {
-					'tabs': {
+					'app': {
 						templateUrl: "templates/tabs.html"
 					}
 				}
