@@ -136,10 +136,6 @@ angular.module('HealthMeasures', [
 		});
 	})
 
-	.run(['$rootScope', 'Formats', function($rootScope, Formats) {
-		$rootScope.formats = Formats;
-	}])
-
 	.run(['$rootScope', '$location', '$state', 'User', function ($rootScope, $location, $state, User) {
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 
