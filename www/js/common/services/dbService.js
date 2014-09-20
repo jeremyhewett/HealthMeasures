@@ -28,7 +28,7 @@ angular.module('HealthMeasures.common')
 		var databaseService = {
 
 			initialize: function() {
-				db = new PouchDB(User.registeredUser().id);
+				db = new PouchDB(User.registeredUser().id, {adapter : 'websql'});
 			},
 
 			get: function(id) {
