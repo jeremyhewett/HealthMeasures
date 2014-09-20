@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.diary')
 
-.controller('DiaryController', ['$scope', 'Diary', function($scope, Diary) {
+	.controller('DiaryController', ['$scope', 'Diary', function($scope, Diary) {
 
 		$scope.entry = {};
 
