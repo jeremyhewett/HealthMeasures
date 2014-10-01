@@ -6,7 +6,7 @@ var app = express();
 app.use(handlers.jsonParser);
 app.use(handlers.allowCrossDomain);
 
-require('./resources/usersResource')(app);
+require('./../server/api/user/usersResource')(app);
 
 var server = app.listen(80, function() {
 	console.log('Listening on port %d', server.address().port);
