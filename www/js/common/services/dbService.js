@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.common')
 
-	.factory('Database', function($q, User) {
+	.factory('Database', function($q, $cookies, Config, User) {
 
 		var db;
 
@@ -28,7 +28,8 @@ angular.module('HealthMeasures.common')
 		var databaseService = {
 
 			initialize: function() {
-				db = new PouchDB(User.registeredUser().id, {adapter : 'websql'});
+				db = new PouchDB(User.getActiveUser().database, {adapter : 'websql'});
+				$cookies['AuthSession'] = User.getActiveUser().token;
 			},
 
 			get: function(id) {
@@ -115,6 +116,17 @@ angular.module('HealthMeasures.common')
 					deferred.reject(error);
 				});
 				return deferred.promise;
+			},
+
+			sync: function() {
+				var sync = PouchDB.sync(Config.couchdbUrl + '/' + User.getActiveUser().database, User.getActiveUser().database)
+					.on('complete', function (info) {
+						console.log('CouchDB sync complete.');
+					}).on('uptodate', function (info) {
+						console.log('CouchDB sync uptodate.');
+					}).on('error', function (err) {
+						console.log('CouchDB sync error: ' + err);
+					});
 			}
 
 		};

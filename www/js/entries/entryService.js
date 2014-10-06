@@ -7,6 +7,8 @@ angular.module('HealthMeasures.entries')
 
 			forParameter: function(parameterId) {
 
+				Database.sync();
+
 				var entries;
 
 				var api = {

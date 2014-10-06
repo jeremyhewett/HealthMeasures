@@ -1,6 +1,7 @@
 
 angular.module('HealthMeasures', [
 	'ionic',
+	'ngCookies',
 	'HealthMeasures.common',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
@@ -14,7 +15,8 @@ angular.module('HealthMeasures', [
 ])
 
 	.constant('Config', {
-		apiUrl: 'http://localhost:80/api',
+		apiUrl: 'http://localhost:9000/api',
+		couchdbUrl: 'http://localhost:5984',
 		injectMockData: true
 	})
 
@@ -129,6 +131,10 @@ angular.module('HealthMeasures', [
 		$urlRouterProvider.otherwise('/app/tab/home');
 
 	})
+
+	.config(['$httpProvider', function($httpProvider) {
+		$httpProvider.defaults.withCredentials = true;
+	}])
 
 	.run(function($ionicPlatform, $location) {
 

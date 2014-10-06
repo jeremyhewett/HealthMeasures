@@ -14,27 +14,31 @@ var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
 
+var allowCrossOrigin = require('../services/allowCrossOrigin');
+
 module.exports = function(app) {
-  var env = app.get('env');
+	var env = app.get('env');
 
-  app.use(compression());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
-  app.use(methodOverride());
-  app.use(cookieParser());
-  
-  if ('production' === env) {
-    app.use(express.static(path.join(config.root, 'public')));
-    app.set('appPath', config.root + '/public');
-    app.use(morgan('dev'));
-  }
+	app.use(compression());
+	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(bodyParser.json());
+	app.use(methodOverride());
+	app.use(cookieParser());
 
-  if ('development' === env || 'test' === env) {
-    //app.use(require('connect-livereload')());
-    app.use(express.static(path.join(config.root, '.tmp')));
-    app.use(express.static(path.join(config.root, 'client')));
-    app.set('appPath', 'client');
-    app.use(morgan('dev'));
-    app.use(errorHandler()); // Error handler - has to be last
-  }
+	app.use(allowCrossOrigin());
+
+	if('production' === env) {
+		app.use(express.static(path.join(config.root, 'public')));
+		app.set('appPath', config.root + '/public');
+		app.use(morgan('dev'));
+	}
+
+	if('development' === env || 'test' === env) {
+		//app.use(require('connect-livereload')());
+		app.use(express.static(path.join(config.root, '.tmp')));
+		app.use(express.static(path.join(config.root, 'client')));
+		app.set('appPath', 'client');
+		app.use(morgan('dev'));
+		app.use(errorHandler()); // Error handler - has to be last
+	}
 };

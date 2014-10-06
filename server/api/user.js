@@ -1,129 +1,71 @@
 
-var USERNAME_PREFIX = 'org.couchdb.user:';
-
-var passwordService = require('../services/passwordService');
-var userService = require('../services/userService');
-
-var nano = require('nano')('http://jeremy:password@localhost:5984');
-var cookieModule = require('cookie');
+var config = require('../config/environment');
+var nano = require('nano')(config.couchdb.url);
+var couch = require('../services/couch');
 
 exports.create = function(req, res) { //Register
 	var credentials = req.body;
-	console.log("User: ", JSON.stringify(credentials));
+	console.log("Register: ", JSON.stringify(credentials));
 
 	var _users = nano.use('_users');
 
-	_users.get(USERNAME_PREFIX + credentials.username, function(err, body) {
-		if(err && err.status_code === 404) {
-			var user = {
-				name: credentials.username,
-				password: credentials.password,
-				roles: [],
-				type: 'user'
-			};
+	var user = {
+		name: credentials.username,
+		password: credentials.password,
+		roles: [],
+		type: 'user'
+	};
 
-			_users.insert(user, USERNAME_PREFIX + credentials.username, function(err, body) {
-				if(err) {
-
-				} else {
-					nano.db.create(credentials.username, function(err, body) {
-						if (!err) {
-							console.log('Database ' + credentials.username + ' created!');
+	_users.insert(user, couch.USERNAME_PREFIX + credentials.username, function(err, body) {
+		if(err) {
+			res.json({ error: err });
+		} else {
+			_users.get(couch.USERNAME_PREFIX + credentials.username, function(err, userEntity) {
+				nano.request({
+					method: 'GET',
+					path: '_uuids',
+					params: {count: 1}
+				}, function(err, body) {
+					userEntity.database = 'db_' + body.uuids[0];
+					nano.db.create(userEntity.database, function(err, body) {
+						if(err) {
+							_users.destroy(couch.USERNAME_PREFIX + credentials.username, userEntity._rev, function(err, body) {
+								res.json({ error: err });
+							});
+						} else {
+							console.log('Database ' + userEntity.database + ' created!');
 							//Set permissions
-							var userDb = nano.use(credentials.username);
+							var db = nano.use(userEntity.database);
 							var permissions = {
 								admins: { names: [], roles: [] },
 								members: { names: [credentials.username], roles: [] }
 							};
-							userDb.insert(permissions, '_security', function(err, body) {
+							db.insert(permissions, '_security', function(err, body) {
 								if(err) {
-
-									//Todo: delete database and _user entry
-
-									res.json({
-										error: 'Failed to secure database',
-										message: 'Failed to secure database'
+									nano.db.destroy(userEntity.database, function(err, body) {
+										_users.destroy(couch.USERNAME_PREFIX + credentials.username, userEntity._rev, function(err, body) {
+											res.json({ error: err });
+										});
 									});
-
 								} else {
-									//Retrieve cookie
-									nano.auth(credentials.username, credentials.password, function(err, body, headers) {
-										if(err || !(headers && headers['set-cookie'])) {
-											res.json({
-												error: 'Failed to get authorization cookie',
-												message: 'Failed to get authorization cookie'
+									//Link user to database
+									_users.insert(userEntity, function(err, body) {
+										if(err) {
+											nano.db.destroy(userEntity.database, function(err, body) {
+												_users.destroy(couch.USERNAME_PREFIX + credentials.username, userEntity._rev, function(err, body) {
+													res.json({ error: err });
+												});
 											});
 										} else {
-											var cookie = cookieModule.parse(headers['set-cookie'][0]);
-											res.cookie('AuthSession', cookie.AuthSession);
-											res.json({success: true});
+											res.json({success: true, username: userEntity.name});
 										}
 									});
 								}
 							});
-						} else {
-
-							//Todo: delete _user entry
-
-							res.json({
-								error: 'Failed to create database',
-								message: 'Failed to create database'
-							});
 						}
 					});
-
-				}
-			});
-
-		} else {
-			res.json({
-				error: 'Exists',
-				message: "A user with this email already exists."
+				});
 			});
 		}
-	});
-
-
-
-//	var hash = passwordService.hash(user.password);
-//	user.password = hash;
-//	userService.insert(user, function(err, dbUser) {
-//		if(err) {
-//			if(err.code == 11000) { //Duplicate key
-//				res.status(400);
-//				res.json({
-//					error: err,
-//					message: "A user with this email already exists"
-//				});
-//			}
-//		} else {
-//			dbUser.password = "";
-//			res.status(200);
-//			res.json(dbUser);
-//		}
-//	});
-};
-
-exports.show = function(req, res) { //Login
-	var user = req.body;
-
-	if(user.username.length == 0 || user.password.length == 0) {
-		res.status(403);
-		res.json({ error: "Invalid Credentials" });
-	}
-
-	userService.findOne({ username: user.username}, function(err, dbUser) {
-
-		var isMatch = passwordService.isMatch(user.password, dbUser.password);
-
-		if(isMatch) {
-			dbUser.password = "";
-			res.status(400);
-			res.json(dbUser);
-		} else {
-			res.status(403);
-			res.json({ error: "Invalid User" });
-		}
-
 	});
 };

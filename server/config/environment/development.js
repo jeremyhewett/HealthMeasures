@@ -3,10 +3,9 @@
 // Development specific configuration
 // ==================================
 module.exports = {
-  // MongoDB connection options
-  mongo: {
-    uri: 'mongodb://localhost/yeomanfullstack-dev'
-  },
 
-  seedDB: true
+	couchdb: {
+		url: 'http://jeremy:password@localhost:5984'
+	}
+
 };

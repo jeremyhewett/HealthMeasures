@@ -30,7 +30,7 @@ function generateApiRoutes(resource) {
 module.exports = function(app) {
 
 	// Insert routes below
-	app.use('/api/thing', generateApiRoutes('thing'));
 	app.use('/api/user', generateApiRoutes('user'));
+	app.use('/api/auth', generateApiRoutes('auth'));
 
 };
