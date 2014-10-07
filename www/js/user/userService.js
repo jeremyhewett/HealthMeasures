@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.user')
 
-	.factory('User', function($http, $q, $window, Config) {
+	.factory('User', function($http, $q, $rootScope, $window, Config) {
 
 		var activeUser;
 
@@ -26,6 +26,7 @@ angular.module('HealthMeasures.user')
 				$http.post(Config.apiUrl + '/auth', credentials)
 					.success(function(response) {
 						$window.sessionStorage.setItem('User.activeUser', JSON.stringify(response.user));
+						$rootScope.$broadcast('User.login', response.user);
 						deferred.resolve(response.user);
 					})
 					.error(function(response) {

@@ -132,10 +132,6 @@ angular.module('HealthMeasures', [
 
 	})
 
-	.config(['$httpProvider', function($httpProvider) {
-		$httpProvider.defaults.withCredentials = true;
-	}])
-
 	.run(function($ionicPlatform, $location) {
 
 		$location.path('/app/loading');

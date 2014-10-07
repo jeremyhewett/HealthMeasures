@@ -7,8 +7,6 @@ angular.module('HealthMeasures.entries')
 
 			forParameter: function(parameterId) {
 
-				Database.sync();
-
 				var entries;
 
 				var api = {
@@ -52,6 +50,20 @@ angular.module('HealthMeasures.entries')
 						Database.delete(entry).then(function(entity) {
 							entries.splice(entries.indexOf(entry), 1);
 							deferred.resolve(entries);
+						}).catch(function(error) {
+							deferred.reject(error);
+						});
+						return deferred.promise;
+					},
+
+					refresh: function() {
+						var deferred = $q.defer();
+						Database.sync().then(function() {
+							api.getEntries().then(function(entries) {
+								deferred.resolve(entries);
+							}).catch(function(error) {
+								deferred.reject(error);
+							});
 						}).catch(function(error) {
 							deferred.reject(error);
 						});

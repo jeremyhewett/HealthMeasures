@@ -18,7 +18,7 @@ exports.create = function(req, res) { //Login
 					res.json({user: {
 						username: userEntity.name,
 						database: userEntity.database,
-						token: cookie.AuthSession
+						cookie: {'AuthSession': cookie['AuthSession']}
 					}});
 				} else {
 					res.json({ error: 'Failed to authenticate user: ' + credentials.username});
