@@ -1,7 +1,7 @@
 
 var nano = require('nano')('http://jeremy:password@localhost:5984');
 var cookieModule = require('cookie');
-var couch = require('../services/couch');
+var couch = require('../services/couchService');
 
 exports.create = function(req, res) { //Login
 

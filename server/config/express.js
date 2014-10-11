@@ -14,7 +14,7 @@ var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
 
-var allowCrossOrigin = require('../services/allowCrossOrigin');
+var allowCrossOrigin = require('../middleware/allowCrossOrigin');
 
 module.exports = function(app) {
 	var env = app.get('env');
