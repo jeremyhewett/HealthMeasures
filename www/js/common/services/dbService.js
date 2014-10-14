@@ -12,7 +12,7 @@ angular.module('HealthMeasures.common')
 
 		var sync = AsyncCallManager.queueOverlappingCallsTo(function() {
 			var deferred = $q.defer();
-			var sync = PouchDB.sync(Config.couchdbUrl + '/' + User.getActiveUser().database, User.getActiveUser().database)
+			var sync = PouchDB.sync(Config.apiUrl + '/db/' + User.getActiveUser().database, User.getActiveUser().database)
 				.on('complete', function (info) {
 					deferred.resolve();
 				}).on('uptodate', function (info) {
@@ -98,7 +98,7 @@ angular.module('HealthMeasures.common')
 						return doc.id;
 					});
 					db.allDocs({keys: keys, include_docs: true}).then(function(response) {
-						sync();
+						//sync();
 						deferred.resolve(response.rows.map(function(row) {
 							return row.doc;
 						}));
@@ -132,7 +132,7 @@ angular.module('HealthMeasures.common')
 					doc._deleted = true;
 				});
 				db.bulkDocs(docs).then(function(response) {
-					sync();
+					//sync();
 					deferred.resolve(response);
 				}).catch(function(error){
 					deferred.reject(error);
