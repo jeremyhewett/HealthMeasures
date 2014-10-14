@@ -1,0 +1,14 @@
+Install openSSL
+URL: http://slproweb.com/products/Win32OpenSSL.html
+
+Workaround bug
+In "C:/OpenSSL-Win32/bin", create "usr/local/ssl"
+Copy /bin/openssl.cfg into the new directory and rename to openssl.cnf
+
+Add paths
+Add "C:/OpenSSL-Win32/bin" to path environment variable
+
+Create Certificate
+openssl genrsa -out mykey.pem 1024
+openssl rsa -in mykey.pem -pubout > publickey.pub
+openssl req -new -x509 -key mykey.pem -out certificate.cer -days 1825

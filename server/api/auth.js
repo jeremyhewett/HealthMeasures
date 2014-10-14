@@ -1,30 +1,37 @@
 
-var nano = require('nano')('http://jeremy:password@localhost:5984');
+var bodyParser = require('body-parser');
 var cookieModule = require('cookie');
 var couch = require('../services/couchService');
 
+exports.middleware = [
+	bodyParser.urlencoded({ extended: false }),
+	bodyParser.json()
+];
+
 exports.create = function(req, res) { //Login
 
-	var credentials = req.body;
+	var credentials = req.body,
+		userEntity;
 
-	nano.use('_users').get(couch.USERNAME_PREFIX + credentials.username, function(err, entity) {
-		var userEntity = entity;
-		nano.auth(credentials.username, credentials.password, function(err, body, headers) {
-			if(err) {
-				res.json({ error: err});
-			} else {
-				if(headers && headers['set-cookie']) {
-					var cookie = cookieModule.parse(headers['set-cookie'][0]);
-					res.json({user: {
-						username: userEntity.name,
-						database: userEntity.database,
-						cookie: {'AuthSession': cookie['AuthSession']}
-					}});
-				} else {
-					res.json({ error: 'Failed to authenticate user: ' + credentials.username});
-				}
-			}
-		});
+	couch.use('_users').get(couch.USER_PREFIX + credentials.username).then(function(entity) {
+		userEntity = entity;
+		return couch.auth(credentials.username, credentials.password);
+	}).then(function(headers) {
+		if(headers && headers['set-cookie']) {
+			var cookie = cookieModule.parse(headers['set-cookie'][0]);
+			console.log('Valid AuthSession: ' + cookie['AuthSession']);
+			res.json({user: {
+				username: userEntity.name,
+				database: userEntity.database,
+				cookie: {'AuthSession': cookie['AuthSession']}
+			}});
+		} else {
+			res.status(401);
+			res.json({ error: 'Failed to authenticate user: ' + credentials.username});
+		}
+	}).catch(function(err) {
+		res.status(500);
+		res.json({ error: err});
 	});
 
 };

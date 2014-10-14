@@ -1,5 +1,11 @@
 
+var bodyParser = require('body-parser');
 var couch = require('../services/couchService');
+
+exports.middleware = [
+	bodyParser.urlencoded({ extended: false }),
+	bodyParser.json()
+];
 
 exports.create = function(req, res) { //Register
 	var credentials = req.body;

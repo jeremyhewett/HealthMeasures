@@ -11,7 +11,8 @@ var RESTactions = [
 	{verb: 'post', path: '/', method: 'create'},
 	{verb: 'get', path: '/:id', method: 'show'},
 	{verb: 'put', path: '/:id', method: 'update'},
-	{verb: 'delete', path: '/:id', method: 'destroy'}
+	{verb: 'delete', path: '/:id', method: 'destroy'},
+	{verb: 'all', path: '/*', method: 'all'}
 ];
 
 function generateApiRoutes(resource) {
@@ -20,7 +21,7 @@ function generateApiRoutes(resource) {
 
 	RESTactions.forEach(function(action) {
 		if(controller[action.method]) {
-			router[action.verb](action.path, controller[action.method]);
+			router[action.verb](action.path, controller.middleware || [], controller[action.method]);
 		}
 	});
 
@@ -32,5 +33,6 @@ module.exports = function(app) {
 	// Insert routes below
 	app.use('/api/user', generateApiRoutes('user'));
 	app.use('/api/auth', generateApiRoutes('auth'));
+	app.use('/api/db', generateApiRoutes('db'));
 
 };

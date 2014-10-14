@@ -16,7 +16,7 @@ angular.module('HealthMeasures', [
 
 	.constant('Config', {
 		apiUrl: 'http://localhost:9000/api',
-		couchdbUrl: 'http://localhost:5984',
+		couchdbUrl: 'http://localhost:9000/api/db', //'https://localhost:5984',
 		injectMockData: true
 	})
 
