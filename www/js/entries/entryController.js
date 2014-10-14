@@ -32,4 +32,14 @@ angular.module('HealthMeasures.entries')
 			});
 		};
 
+		$scope.refresh = function() {
+			entryService.refresh().then(function(entries) {
+				$scope.entries = entries;
+			}).catch(function(error) {
+				console.error(error.message);
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+			});
+		};
+
 	}]);

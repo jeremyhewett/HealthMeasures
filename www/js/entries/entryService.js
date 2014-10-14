@@ -54,6 +54,20 @@ angular.module('HealthMeasures.entries')
 							deferred.reject(error);
 						});
 						return deferred.promise;
+					},
+
+					refresh: function() {
+						var deferred = $q.defer();
+						Database.sync().then(function() {
+							api.getEntries().then(function(entries) {
+								deferred.resolve(entries);
+							}).catch(function(error) {
+								deferred.reject(error);
+							});
+						}).catch(function(error) {
+							deferred.reject(error);
+						});
+						return deferred.promise;
 					}
 
 				};

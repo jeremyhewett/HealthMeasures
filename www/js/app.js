@@ -1,6 +1,7 @@
 
 angular.module('HealthMeasures', [
 	'ionic',
+	'ngCookies',
 	'HealthMeasures.common',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
@@ -14,7 +15,8 @@ angular.module('HealthMeasures', [
 ])
 
 	.constant('Config', {
-		apiUrl: 'http://localhost:80/api',
+		apiUrl: 'https://localhost:9000/api',
+		//couchdbUrl: 'http://localhost:9000/api/db', //'https://localhost:5984',
 		injectMockData: true
 	})
 
@@ -33,6 +35,14 @@ angular.module('HealthMeasures', [
 				controller: 'AppController'
 			})
 
+			.state('app.loading', {
+				url: '/loading',
+				views: {
+					'app': {
+						controller: 'LoadingController'
+					}
+				}
+			})
 
 			.state('app.authorize', {
 				url: '/authorize',
@@ -122,7 +132,10 @@ angular.module('HealthMeasures', [
 
 	})
 
-	.run(function($ionicPlatform) {
+	.run(function($ionicPlatform, $location) {
+
+		$location.path('/app/loading');
+
 		$ionicPlatform.ready(function() {
 			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 			// for form inputs)
@@ -133,10 +146,12 @@ angular.module('HealthMeasures', [
 				// org.apache.cordova.statusbar required
 				StatusBar.styleDefault();
 			}
+
+			$location.path('/app/tab/home');
 		});
 	})
 
-	.run(['$rootScope', '$location', '$state', 'User', function ($rootScope, $location, $state, User) {
+	.run(function ($rootScope, $location, $state, User) {
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 
 			if (!User.isAuthorized() && toState.name !== 'app.authorize') {
@@ -145,5 +160,5 @@ angular.module('HealthMeasures', [
 			}
 
 		});
-	}]);
+	});
 

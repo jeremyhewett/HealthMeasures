@@ -1,10 +1,24 @@
 <ion-view title="Register">
   <ion-content class="has-header">
 
+    <form ng-submit="login()">
+      <div class="list">
+        <label class="item item-input">
+          <input type="text" placeholder="email" ng-model="user.username">
+        </label>
+        <label class="item item-input">
+          <input type="password" placeholder="password" ng-model="user.password">
+        </label>
+      </div>
+      <div class="padding">
+        <button type="submit" class="button button-block button-positive">Login</button>
+      </div>
+    </form>
+
     <form ng-submit="register()">
       <div class="list">
         <label class="item item-input">
-          <input type="text" placeholder="email" ng-model="user.email">
+          <input type="text" placeholder="email" ng-model="user.username">
         </label>
         <label class="item item-input">
           <input type="password" placeholder="password" ng-model="user.password">
@@ -17,7 +31,7 @@
 
     <ion-list>
       <ion-item type="item-text-wrap">
-        <span>email: </span><span>{{user.email}}</span>
+        <span>email: </span><span>{{user.username}}</span>
       </ion-item>
       <ion-item ng-show="user.id" type="item-text-wrap">
         <span>id: </span><span>{{user.id}}</span>

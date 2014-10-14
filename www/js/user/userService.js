@@ -1,18 +1,33 @@
 angular.module('HealthMeasures.user')
 
-	.factory('User', [function($http, $q, Config) {
+	.factory('User', function($http, $q, $rootScope, $window, Config) {
 
-		var registeredUser = {id: 'jeremy'};
+		var activeUser;
 
 		var userService = {
+
 			register: function(user) {
 				var deferred = $q.defer();
 
-				$http.post(Config.apiUrl + '/user/register', user)
+				$http.post(Config.apiUrl + '/user', user)
 					.success(function(response) {
-						user.id = response._id;
-						registeredUser = user;
-						deferred.resolve(user);
+						deferred.resolve(response);
+					})
+					.error(function(response) {
+						deferred.reject(response);
+					});
+
+				return deferred.promise;
+			},
+
+			login: function(credentials) {
+				var deferred = $q.defer();
+
+				$http.post(Config.apiUrl + '/auth', credentials)
+					.success(function(response) {
+						$window.sessionStorage.setItem('User.activeUser', JSON.stringify(response.user));
+						$rootScope.$broadcast('User.login', response.user);
+						deferred.resolve(response.user);
 					})
 					.error(function(response) {
 						deferred.reject(response);
@@ -22,18 +37,18 @@ angular.module('HealthMeasures.user')
 			},
 
 			logout: function() {
-				registeredUser = undefined;
+				$window.sessionStorage.removeItem('User.activeUser');
 			},
 
-			registeredUser: function() {
-				return registeredUser;
+			getActiveUser: function() {
+				return JSON.parse($window.sessionStorage.getItem('User.activeUser'));
 			},
 
 			isAuthorized: function() {
-				return !!registeredUser;
+				return !!userService.getActiveUser();
 			}
 		};
 
 		return userService;
 
-	}]);
+	});

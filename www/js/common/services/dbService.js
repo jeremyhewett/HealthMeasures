@@ -1,8 +1,31 @@
 angular.module('HealthMeasures.common')
 
-	.factory('Database', function($q, User) {
+	.factory('Database', function($cookies, $q, $rootScope, AsyncCallManager, Config, User) {
 
 		var db;
+
+		function initialize() {
+			var user = User.getActiveUser();
+			db = new PouchDB(user.database, {adapter : 'websql'});
+			angular.extend($cookies, user.cookie);
+		}
+
+		var sync = AsyncCallManager.queueOverlappingCallsTo(function() {
+			var deferred = $q.defer();
+			var sync = PouchDB.sync(Config.apiUrl + '/db/' + User.getActiveUser().database, User.getActiveUser().database)
+				.on('complete', function (info) {
+					deferred.resolve();
+				}).on('uptodate', function (info) {
+					console.log('CouchDB sync uptodate.');
+				}).on('error', function (err) {
+					console.log('CouchDB sync error: ' + err);
+					if(err.status === 401) { //Authentication required.
+						User.logout();
+					}
+					deferred.reject(err);
+				});
+			return deferred.promise;
+		});
 
 		function filter(criteria, sort) {
 			return function(doc, emit) {
@@ -26,10 +49,6 @@ angular.module('HealthMeasures.common')
 		}
 
 		var databaseService = {
-
-			initialize: function() {
-				db = new PouchDB(User.registeredUser().id);
-			},
 
 			get: function(id) {
 				var deferred = $q.defer();
@@ -58,6 +77,7 @@ angular.module('HealthMeasures.common')
 				var promise = doc._id ? db.put(doc) : db.post(doc);
 				promise.then(function(doc) {
 					db.get(doc.id).then(function(doc) {
+						sync();
 						deferred.resolve(doc);
 					}).catch(function(error){
 						deferred.reject(error);
@@ -78,6 +98,7 @@ angular.module('HealthMeasures.common')
 						return doc.id;
 					});
 					db.allDocs({keys: keys, include_docs: true}).then(function(response) {
+						//sync();
 						deferred.resolve(response.rows.map(function(row) {
 							return row.doc;
 						}));
@@ -94,6 +115,7 @@ angular.module('HealthMeasures.common')
 				var deferred = $q.defer();
 				db.get(doc._id).then(function(doc) {
 					db.remove(doc).then(function(doc) {
+						sync();
 						deferred.resolve(doc);
 					}).catch(function(error) {
 						deferred.reject(error);
@@ -110,16 +132,20 @@ angular.module('HealthMeasures.common')
 					doc._deleted = true;
 				});
 				db.bulkDocs(docs).then(function(response) {
+					//sync();
 					deferred.resolve(response);
 				}).catch(function(error){
 					deferred.reject(error);
 				});
 				return deferred.promise;
-			}
+			},
+
+			sync: sync
 
 		};
 
-		databaseService.initialize();
+		$rootScope.$on('User.login', initialize);
+		initialize();
 
 		return databaseService;
 
