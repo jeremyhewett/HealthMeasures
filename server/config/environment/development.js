@@ -5,7 +5,7 @@
 module.exports = {
 
 	couchdb: {
-		url: 'http://jeremy:password@localhost:5984'
+		host: 'localhost:5984' //'http://jeremy:password@localhost:5984'
 	}
 
 };

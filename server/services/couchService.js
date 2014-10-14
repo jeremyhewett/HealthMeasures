@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var Q = require('q');
 var config = require('../config/environment');
-var nano = require('nano')(config.couchdb.url);
+var nano = require('nano')('http://jeremy:password@' + config.couchdb.host);
 
 function denodeify(f, index) {
 	index = index || 0;
