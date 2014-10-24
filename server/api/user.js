@@ -62,6 +62,7 @@ exports.create = function(req, res) { //Register
 			try {
 				_users.destroy(couch.USER_PREFIX + credentials.username, userEntity._rev);
 			} catch(err) {}
+			res.status(500);
 			res.json({ error: err });
 		});
 };
