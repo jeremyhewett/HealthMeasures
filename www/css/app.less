@@ -1,5 +1,6 @@
 
 @clickable-grey: #999;
+@error-background: #f2dede;
 
 .scroll {
   min-height: 100%;
@@ -29,4 +30,8 @@
     font-size: 20px;
     cursor: pointer;
   }
+}
+
+input.ng-invalid {
+  color: @error-background;
 }
