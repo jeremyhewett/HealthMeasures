@@ -19,7 +19,6 @@ exports.create = function(req, res) { //Login
 	}).then(function(headers) {
 		if(headers && headers['set-cookie']) {
 			var cookie = cookieModule.parse(headers['set-cookie'][0]);
-			console.log('Valid AuthSession: ' + cookie['AuthSession']);
 			res.json({user: {
 				username: userEntity.name,
 				database: userEntity.database,

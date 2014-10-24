@@ -1,13 +1,15 @@
 angular.module('HealthMeasures.common')
 
-	.factory('Database', function($cookies, $q, $rootScope, AsyncCallManager, Config, User) {
+	.factory('Database', function(ipCookie, $q, $rootScope, AsyncCallManager, Config, User) {
 
 		var db;
 
 		function initialize() {
 			var user = User.getActiveUser();
 			db = new PouchDB(user.database, {adapter : 'websql'});
-			angular.extend($cookies, user.cookie);
+			for(var key in user.cookie) {
+				ipCookie(key, user.cookie[key], {path: '/api/db/', secure: true});
+			}
 		}
 
 		var sync = AsyncCallManager.queueOverlappingCallsTo(function() {

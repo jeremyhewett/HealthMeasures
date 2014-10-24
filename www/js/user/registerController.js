@@ -7,23 +7,17 @@ angular.module('HealthMeasures.user')
 			password: 'testpassword'
 		};
 
-		$scope.login = function() {
-			User.login($scope.user).then(function(user) {
-				$scope.user = user;
+		$scope.register = function() {
+			User.register($scope.user).then(function() {
 				delete $scope.error;
-				$state.go('app.tab.home');
+				$state.go('app.login');
 			}, function(error) {
 				$scope.error = error;
 			});
 		};
 
-		$scope.register = function() {
-			User.register($scope.user).then(function() {
-				delete $scope.error;
-				$scope.login();
-			}, function(error) {
-				$scope.error = error;
-			});
+		$scope.login = function() {
+			$state.go('app.login');
 		};
 
 	});

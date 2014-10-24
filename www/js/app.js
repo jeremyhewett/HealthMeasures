@@ -1,7 +1,7 @@
 
 angular.module('HealthMeasures', [
 	'ionic',
-	'ngCookies',
+	'ipCookie',
 	'HealthMeasures.common',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
@@ -32,7 +32,8 @@ angular.module('HealthMeasures', [
 				url: '/app',
 				abstract: true,
 				templateUrl: "templates/app.html",
-				controller: 'AppController'
+				controller: 'AppController',
+				public: true
 			})
 
 			.state('app.loading', {
@@ -41,17 +42,30 @@ angular.module('HealthMeasures', [
 					'app': {
 						controller: 'LoadingController'
 					}
-				}
+				},
+				public: true
 			})
 
-			.state('app.authorize', {
-				url: '/authorize',
+			.state('app.login', {
+				url: '/login',
+				views: {
+					'app': {
+						templateUrl: 'templates/user/login.html',
+						controller: 'LoginController'
+					}
+				},
+				public: true
+			})
+
+			.state('app.register', {
+				url: '/register',
 				views: {
 					'app': {
 						templateUrl: 'templates/user/register.html',
 						controller: 'RegisterController'
 					}
-				}
+				},
+				public: true
 			})
 
 			// setup an abstract state for the tabs directive
@@ -154,9 +168,9 @@ angular.module('HealthMeasures', [
 	.run(function ($rootScope, $location, $state, User) {
 		$rootScope.$on('$stateChangeStart', function (event, toState) {
 
-			if (!User.isAuthorized() && toState.name !== 'app.authorize') {
+			if(!toState.public && !User.isAuthorized()) {
 				event.preventDefault();
-				$state.go('app.authorize');
+				$state.go('app.login');
 			}
 
 		});
