@@ -10,14 +10,14 @@ angular.module('HealthMeasures.user')
 		$scope.register = function() {
 			User.register($scope.user).then(function() {
 				delete $scope.error;
-				$state.go('app.login');
+				$state.go('app.start.login');
 			}, function(error) {
 				$scope.error = error;
 			});
 		};
 
 		$scope.login = function() {
-			$state.go('app.login');
+			$state.go('app.start.login');
 		};
 
 	});

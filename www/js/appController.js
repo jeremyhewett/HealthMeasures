@@ -5,7 +5,7 @@ angular.module('HealthMeasures')
 		$scope.$watch(User.isAuthorized, function(isAuthorized) {
 			$scope.isAuthorized = isAuthorized;
 			if(!$scope.isAuthorized) {
-				$state.go('app.login');
+				$state.go('app.start.login');
 			}
 		});
 

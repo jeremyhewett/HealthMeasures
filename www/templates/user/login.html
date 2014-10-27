@@ -1,20 +1,16 @@
-<ion-view title="Login" hide-back-button="true">
-  <ion-content class="has-header">
-    <form>
-      <div class="list">
-        <label class="item item-input">
-          <input type="email" placeholder="email" ng-model="user.username">
-        </label>
-        <label class="item item-input">
-          <input type="password" placeholder="password" ng-model="user.password">
-        </label>
-      </div>
-      <div class="padding">
-        <button style="width: 49%; float: left;" ng-click="login()" class="button button-positive">Login</button>
-        <div style="width: 49%; float: right; text-align: center; padding-top: 15px;">
-          <a href="#/app/register">Register</a>
-        </div>
-      </div>
-    </form>
-  </ion-content>
-</ion-view>
+<form>
+  <div class="list">
+    <label class="item item-input">
+      <input type="email" placeholder="email" ng-model="user.username">
+    </label>
+    <label class="item item-input">
+      <input type="password" placeholder="password" ng-model="user.password">
+    </label>
+  </div>
+  <div class="padding">
+    <button style="width: 49%; float: left;" ng-click="login()" class="button button-positive">Login</button>
+    <div style="width: 49%; float: right; text-align: center; padding-top: 15px;">
+      <a href ng-click="register()">Register</a>
+    </div>
+  </div>
+</form>

@@ -18,7 +18,7 @@ angular.module('HealthMeasures.user')
 		};
 
 		$scope.register = function() {
-			$state.go('app.register');
+			$state.go('app.start.register');
 		};
 
 	});

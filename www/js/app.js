@@ -3,6 +3,7 @@ angular.module('HealthMeasures', [
 	'ionic',
 	'ipCookie',
 	'HealthMeasures.common',
+	'HealthMeasures.start',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.services',
@@ -46,10 +47,22 @@ angular.module('HealthMeasures', [
 				public: true
 			})
 
-			.state('app.login', {
-				url: '/login',
+			.state('app.start', {
+				url: '/start',
+				abstract: true,
 				views: {
 					'app': {
+						templateUrl: 'templates/start.html',
+						controller: 'StartController'
+					}
+				},
+				public: true
+			})
+
+			.state('app.start.login', {
+				url: '/login',
+				views: {
+					'form': {
 						templateUrl: 'templates/user/login.html',
 						controller: 'LoginController'
 					}
@@ -57,10 +70,10 @@ angular.module('HealthMeasures', [
 				public: true
 			})
 
-			.state('app.register', {
+			.state('app.start.register', {
 				url: '/register',
 				views: {
-					'app': {
+					'form': {
 						templateUrl: 'templates/user/register.html',
 						controller: 'RegisterController'
 					}
@@ -170,7 +183,7 @@ angular.module('HealthMeasures', [
 
 			if(!toState.public && !User.isAuthorized()) {
 				event.preventDefault();
-				$state.go('app.login');
+				$state.go('app.start.login');
 			}
 
 		});
