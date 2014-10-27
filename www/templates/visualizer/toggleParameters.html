@@ -1,13 +1,24 @@
-<ul class="list">
+<ion-modal-view>
+  <ion-header-bar>
+    <h3 class="title">Select Parameters</h3>
+  </ion-header-bar>
+  <ion-content>
+    <ul class="list">
 
-  <li class="item item-toggle" ng-repeat="param in parameters.map">
-    {{param.displayName}}
-    <label class="toggle toggle-balanced">
-      <input type="checkbox" ng-model="param.isActive" ng-disabled="activeParameters().length >= 3 && !param.isActive">
-      <div class="track">
-        <div class="handle"></div>
-      </div>
-    </label>
-  </li>
+      <li class="item item-toggle" ng-repeat="param in parameters.map">
+        {{param.displayName}}
+        <label class="toggle toggle-balanced">
+          <input type="checkbox" ng-model="param.isActive" ng-disabled="activeParameters().length >= 3 && !param.isActive">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </li>
 
-</ul>
+    </ul>
+
+    <button ng-click="submitParameters()" class="button button-block button-positive">Done</button>
+  </ion-content>
+</ion-modal-view>
+
+

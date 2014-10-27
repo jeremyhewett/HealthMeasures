@@ -1,6 +1,6 @@
 angular.module('HealthMeasures')
 
-	.controller('AppController', function($scope, $state, User) {
+	.controller('AppController', function($ionicSideMenuDelegate, $scope, $state, User) {
 
 		$scope.$watch(User.isAuthorized, function(isAuthorized) {
 			$scope.isAuthorized = isAuthorized;
@@ -8,5 +8,13 @@ angular.module('HealthMeasures')
 				$state.go('app.start.login');
 			}
 		});
+
+		$scope.toggleMenu = function() {
+			$ionicSideMenuDelegate.toggleLeft();
+		};
+
+		$scope.logout = function() {
+			User.logout();
+		};
 
 	});
