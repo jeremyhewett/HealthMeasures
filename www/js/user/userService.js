@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.user')
 
-	.factory('User', function($http, $q, $rootScope, $window, Config) {
+	.factory('User', function($q, $rootScope, $window, Api, Config) {
 
 		var activeUser;
 
@@ -9,11 +9,11 @@ angular.module('HealthMeasures.user')
 			register: function(user) {
 				var deferred = $q.defer();
 
-				$http.post(Config.apiUrl + '/user', user)
-					.success(function(response) {
+				Api.post(Config.server + 'user', user)
+					.then(function(response) {
 						deferred.resolve(response);
 					})
-					.error(function(response) {
+					.catch(function(response) {
 						deferred.reject(response);
 					});
 
@@ -23,13 +23,13 @@ angular.module('HealthMeasures.user')
 			login: function(credentials) {
 				var deferred = $q.defer();
 
-				$http.post(Config.apiUrl + '/auth', credentials)
-					.success(function(response) {
+				Api.post('auth', credentials)
+					.then(function(response) {
 						$window.sessionStorage.setItem('User.activeUser', JSON.stringify(response.user));
 						$rootScope.$broadcast('User.login', response.user);
 						deferred.resolve(response.user);
 					})
-					.error(function(response) {
+					.catch(function(response) {
 						deferred.reject(response);
 					});
 
@@ -41,7 +41,11 @@ angular.module('HealthMeasures.user')
 			},
 
 			getActiveUser: function() {
-				return JSON.parse($window.sessionStorage.getItem('User.activeUser'));
+				try {
+					return JSON.parse($window.sessionStorage.getItem('User.activeUser'));
+				} catch(err) {
+
+				}
 			},
 
 			isAuthorized: function() {
