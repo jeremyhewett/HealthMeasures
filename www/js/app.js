@@ -3,6 +3,7 @@ angular.module('HealthMeasures', [
 	'ionic',
 	'ipCookie',
 	'HealthMeasures.common',
+	'HealthMeasures.backend',
 	'HealthMeasures.start',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
@@ -16,9 +17,9 @@ angular.module('HealthMeasures', [
 ])
 
 	.constant('Config', {
-		apiUrl: 'https://localhost:9000/api',
-		//couchdbUrl: 'http://localhost:9000/api/db', //'https://localhost:5984',
-		injectMockData: true
+		server: 'https://localhost:9000',
+		fingerprint: '‎e7 60 67 2f 9f 22 a4 1a 28 9f 8b 46 ad 1d 07 86 7d de d1 7b',
+		injectMockData: false
 	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
@@ -159,7 +160,18 @@ angular.module('HealthMeasures', [
 
 	})
 
-	.run(function($ionicPlatform, $location) {
+	.run(function ($rootScope, $location, $state, User) {
+		$rootScope.$on('$stateChangeStart', function (event, toState) {
+
+			if(!toState.public && !User.isAuthorized()) {
+				event.preventDefault();
+				$state.go('app.start.login');
+			}
+
+		});
+	})
+
+	.run(function($ionicPlatform, $location, App) {
 
 		$location.path('/app/loading');
 
@@ -174,18 +186,6 @@ angular.module('HealthMeasures', [
 				StatusBar.styleDefault();
 			}
 
-			$location.path('/app/tab/home');
-		});
-	})
-
-	.run(function ($rootScope, $location, $state, User) {
-		$rootScope.$on('$stateChangeStart', function (event, toState) {
-
-			if(!toState.public && !User.isAuthorized()) {
-				event.preventDefault();
-				$state.go('app.start.login');
-			}
-
+			App.initialize();
 		});
 	});
-
