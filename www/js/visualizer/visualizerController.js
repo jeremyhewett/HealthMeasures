@@ -1,6 +1,6 @@
 angular.module('HealthMeasures.visualizer')
 
-    .controller('VisualizerController', function($ionicPopup, $q, $scope, ParameterService, Visualizer) {
+    .controller('VisualizerController', function($ionicModal, $q, $scope, ParameterService, Visualizer) {
 
 		$scope.parameters = {
 			list: [],
@@ -68,18 +68,27 @@ angular.module('HealthMeasures.visualizer')
 			})
 		};
 
-		$scope.showPopup = function() {
-			var myPopup = $ionicPopup.show({
-				templateUrl: 'templates/visualizer/toggleParameters.html',
-				title: 'Select Parameters',
-				scope: $scope,
-				buttons: [{ text: 'Done' }]
-			});
-			myPopup.then(function(response) {
-				redraw();
-			});
+		$ionicModal.fromTemplateUrl('templates/visualizer/toggleParameters.html', {
+			scope: $scope,
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			$scope.modal = modal;
+		});
+
+		$scope.selectParameters = function() {
+			$scope.modal.show();
 		};
 
-		initialize();
+		$scope.submitParameters = function() {
+			$scope.modal.hide();
+			redraw();
+		};
 
-    });
+		$scope.$on('$destroy', function() {
+			if($scope.modal) {
+				$scope.modal.remove();
+			}
+		});
+
+		initialize();
+	});

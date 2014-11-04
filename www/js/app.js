@@ -1,8 +1,10 @@
 
 angular.module('HealthMeasures', [
 	'ionic',
-	'ngCookies',
+	'ipCookie',
 	'HealthMeasures.common',
+	'HealthMeasures.backend',
+	'HealthMeasures.start',
 	'HealthMeasures.user',
 	'HealthMeasures.test', //To be commented out on production
 	'HealthMeasures.services',
@@ -15,9 +17,9 @@ angular.module('HealthMeasures', [
 ])
 
 	.constant('Config', {
-		apiUrl: 'https://localhost:9000/api',
-		//couchdbUrl: 'http://localhost:9000/api/db', //'https://localhost:5984',
-		injectMockData: true
+		server: 'https://localhost:9000',
+		fingerprint: '‎e7 60 67 2f 9f 22 a4 1a 28 9f 8b 46 ad 1d 07 86 7d de d1 7b',
+		injectMockData: false
 	})
 
 	.config(function($stateProvider, $urlRouterProvider) {
@@ -32,7 +34,8 @@ angular.module('HealthMeasures', [
 				url: '/app',
 				abstract: true,
 				templateUrl: "templates/app.html",
-				controller: 'AppController'
+				controller: 'AppController',
+				public: true
 			})
 
 			.state('app.loading', {
@@ -41,17 +44,42 @@ angular.module('HealthMeasures', [
 					'app': {
 						controller: 'LoadingController'
 					}
-				}
+				},
+				public: true
 			})
 
-			.state('app.authorize', {
-				url: '/authorize',
+			.state('app.start', {
+				url: '/start',
+				abstract: true,
 				views: {
 					'app': {
+						templateUrl: 'templates/start.html',
+						controller: 'StartController'
+					}
+				},
+				public: true
+			})
+
+			.state('app.start.login', {
+				url: '/login',
+				views: {
+					'form': {
+						templateUrl: 'templates/user/login.html',
+						controller: 'LoginController'
+					}
+				},
+				public: true
+			})
+
+			.state('app.start.register', {
+				url: '/register',
+				views: {
+					'form': {
 						templateUrl: 'templates/user/register.html',
 						controller: 'RegisterController'
 					}
-				}
+				},
+				public: true
 			})
 
 			// setup an abstract state for the tabs directive
@@ -132,7 +160,18 @@ angular.module('HealthMeasures', [
 
 	})
 
-	.run(function($ionicPlatform, $location) {
+	.run(function ($rootScope, $location, $state, User) {
+		$rootScope.$on('$stateChangeStart', function (event, toState) {
+
+			if(!toState.public && !User.isAuthorized()) {
+				event.preventDefault();
+				$state.go('app.start.login');
+			}
+
+		});
+	})
+
+	.run(function($ionicPlatform, $location, App) {
 
 		$location.path('/app/loading');
 
@@ -147,18 +186,6 @@ angular.module('HealthMeasures', [
 				StatusBar.styleDefault();
 			}
 
-			$location.path('/app/tab/home');
-		});
-	})
-
-	.run(function ($rootScope, $location, $state, User) {
-		$rootScope.$on('$stateChangeStart', function (event, toState) {
-
-			if (!User.isAuthorized() && toState.name !== 'app.authorize') {
-				event.preventDefault();
-				$state.go('app.authorize');
-			}
-
+			App.initialize();
 		});
 	});
-

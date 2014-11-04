@@ -1,29 +1,20 @@
 angular.module('HealthMeasures.common')
 
-	.factory('Database', function($cookies, $q, $rootScope, AsyncCallManager, Config, User) {
+	.factory('Database', function(ipCookie, $q, $rootScope, Api, AsyncCallManager, Config, User) {
 
 		var db;
 
-		function initialize() {
-			var user = User.getActiveUser();
-			db = new PouchDB(user.database, {adapter : 'websql'});
-			angular.extend($cookies, user.cookie);
-		}
-
 		var sync = AsyncCallManager.queueOverlappingCallsTo(function() {
 			var deferred = $q.defer();
-			var sync = PouchDB.sync(Config.apiUrl + '/db/' + User.getActiveUser().database, User.getActiveUser().database)
-				.on('complete', function (info) {
-					deferred.resolve();
-				}).on('uptodate', function (info) {
-					console.log('CouchDB sync uptodate.');
-				}).on('error', function (err) {
-					console.log('CouchDB sync error: ' + err);
-					if(err.status === 401) { //Authentication required.
-						User.logout();
-					}
-					deferred.reject(err);
-				});
+			Api.syncDb(User.getActiveUser().database).then(function() {
+				deferred.resolve();
+			}).catch(function(err) {
+				console.log(err);
+				if(err.status === 401) { //Authentication required.
+					User.logout();
+				}
+				deferred.reject(err);
+			});
 			return deferred.promise;
 		});
 
@@ -49,6 +40,10 @@ angular.module('HealthMeasures.common')
 		}
 
 		var databaseService = {
+
+			initialize: function(database) {
+				db = new PouchDB(database, {adapter : 'websql'});
+			},
 
 			get: function(id) {
 				var deferred = $q.defer();
@@ -143,9 +138,6 @@ angular.module('HealthMeasures.common')
 			sync: sync
 
 		};
-
-		$rootScope.$on('User.login', initialize);
-		initialize();
 
 		return databaseService;
 

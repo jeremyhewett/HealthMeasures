@@ -21,3 +21,6 @@
   font-size: 20px;
   cursor: pointer;
 }
+input.ng-invalid {
+  color: #f2dede;
+}
