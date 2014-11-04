@@ -1,3 +1,10 @@
-<ion-content>
-  <button ng-click="logout()" menu-close class="button button-block button-danger">Logout</button>
+<header class="bar bar-header bar-dark">
+  <h1 class="title">Menu</h1>
+</header>
+<ion-content class="has-header">
+  <ion-list>
+    <ion-item menu-close ng-click="logout()" class="bg-dark">
+      Logout
+    </ion-item>
+  </ion-list>
 </ion-content>
